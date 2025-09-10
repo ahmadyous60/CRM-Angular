@@ -1,4 +1,4 @@
-# Mini CRM Application
+# CRM Application
 
 A modern Angular-based Customer Relationship Management (CRM) application with a beautiful dark theme UI.
 
