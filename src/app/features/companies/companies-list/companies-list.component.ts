@@ -1,0 +1,320 @@
+import { Component, signal, computed } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { DataService } from '../../../core/data.service';
+import { NgFor, DatePipe, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Company } from '../../../core/model';
+import { Modal } from 'bootstrap';
+
+@Component({
+  selector: 'app-companies-list',
+  standalone: true,
+  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf],
+  template: `
+  <div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Companies</h3>
+  <a routerLink="/companies/new" class="btn btn-primary">
+    <i class="bi bi-plus-lg"></i> New Company
+  </a>
+</div>
+
+<div class="card p-3">
+  <!-- Search & Page Size Controls -->
+    <div class="mb-3">
+    <div class="row g-2">
+      <div class="col-12">
+        <div class="input-group">
+          <input type="text" class="form-control"
+                 placeholder="Search company name or industry"
+                 [(ngModel)]="qValue">
+          <button *ngIf="qValue" class="btn btn-outline-secondary" type="button" (click)="qValue=''">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Company Table -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Company Name</th>
+          <th>Industry</th>
+          <th>Website</th>
+          <th>Created</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let company of page()">
+          <td>{{ company.name }}</td>
+          <td>{{ company.industry || '-' }}</td>
+          <td>
+            <a *ngIf="company.website" [href]="company.website" target="_blank" class="text-decoration-none text-black">
+              {{ company.website }}
+            </a>
+            <span *ngIf="!company.website">-</span>
+          </td>
+          <td>{{ company.createdAt | date: 'medium' }}</td>
+          <td class="text-end">
+            <button class="btn btn-sm btn-outline-primary me-0" (click)="edit(company)">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger ms-2" (click)="confirmDelete(company.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-info ms-2" (click)="view(company)">
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="page().length === 0">
+          <td colspan="5" class="text-center text-muted py-4">No results</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <small class="text-secondary">
+      Showing {{ (currentPage() - 1) * pageSize() + 1 }}–{{ Math.min(currentPage() * pageSize(), filtered().length) }}
+      of {{ filtered().length }}
+    </small>
+    <div class="btn-group">
+      <button class="btn btn-outline-light btn-sm" [disabled]="currentPage() === 1" (click)="prevPage()">Prev</button>
+      <button class="btn btn-outline-light btn-sm" [disabled]="currentPage() * pageSize() >= filtered().length" (click)="nextPage()">Next</button>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="modal fade show d-block" *ngIf="editing()" style="background: rgba(0,0,0,0.5);" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Company</h5>
+          <button type="button" class="btn-close" (click)="cancelEdit()"></button>
+        </div>
+        <div class="modal-body">
+          <form #editForm="ngForm" (ngSubmit)="update()">
+            <div class="mb-3">
+              <label class="form-label">Company Name</label>
+              <input type="text" class="form-control" [(ngModel)]="editCompany.name" name="name" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Industry</label>
+              <input type="text" class="form-control" [(ngModel)]="editCompany.industry" name="industry">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Website</label>
+              <input type="url" class="form-control" [(ngModel)]="editCompany.website" name="website">
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Save Changes</button>
+              <button type="button" class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Delete Modal -->
+    <div class="modal fade show d-block" *ngIf="deleting()" style="background: rgba(0,0,0,0.5);" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Confirm Delete</h5>
+            <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this Company?
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+            <button class="btn btn-danger" (click)="deleteConfirmed()">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<!-- View Company Modal -->
+<div class="modal fade" id="viewCompanyModal" tabindex="-1" aria-labelledby="viewCompanyLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      
+      <!-- Header -->
+      <div class="modal-header bg-primary text-white rounded-top-4 px-4 py-3">
+        <h5 class="modal-title fw-semibold d-flex align-items-center" id="viewCompanyLabel">
+          <i class="bi bi-building me-2 fs-5"></i> Company Information
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body bg-light px-4 py-4">
+        <div *ngIf="selectedcompany" class="row g-4">
+
+          <!-- Company Name -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary small mb-1">Company Name</label>
+            <div class="p-3 rounded-3 bg-white shadow-sm border">
+              <i class="bi bi-building text-info me-2"></i> {{ selectedcompany.name }}
+            </div>
+          </div>
+
+          <!-- Industry -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary small mb-1">Industry</label>
+            <div class="p-3 rounded-3 bg-white shadow-sm border">
+              <i class="bi bi-briefcase-fill text-warning me-2"></i> {{ selectedcompany.industry }}
+            </div>
+          </div>
+
+          <!-- Website -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary small mb-1">Website</label>
+            <div class="p-3 rounded-3 bg-white shadow-sm border">
+              <i class="bi bi-globe text-success me-2"></i>
+              <a [href]="selectedcompany.website" target="_blank" class="text-dark text-decoration-none">
+                {{ selectedcompany.website }}
+              </a>
+            </div>
+          </div>
+
+
+          <!-- Created At -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary small mb-1">Created At</label>
+            <div class="p-3 rounded-3 bg-white shadow-sm border">
+              <i class="bi bi-calendar-check text-primary me-2"></i>
+              {{ selectedcompany.createdAt | date:'medium' }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer bg-white rounded-bottom-4 px-4 py-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  `
+})
+export class CompaniesListComponent {
+  // signals
+  q = signal('');
+  pageSize = signal(5);
+  currentPage = signal(1);
+  deleting = signal(false);
+  editing = signal(false);
+  editCompany: any = null;
+  Math = Math;
+  selectedId: string | null = null;
+  selectedcompany: Company | null = null;
+
+  companies: () => any[];
+
+  constructor(public ds: DataService) {
+    this.companies = this.ds.list<any>('companies');
+  }
+
+  // --- ngModel friendly wrappers ---
+  get qValue() { return this.q(); }
+  set qValue(val: string) { this.q.set(val); this.currentPage.set(1); }
+
+  get pageSizeValue() { return this.pageSize(); }
+  set pageSizeValue(val: number) { this.pageSize.set(+val); this.currentPage.set(1); }
+
+  // filtered list
+  filtered = computed(() => {
+    const term = this.q().toLowerCase().trim();
+    return this.companies().filter((c: any) =>
+      !term || 
+      c.name.toLowerCase().includes(term) || 
+      (c.industry && c.industry.toLowerCase().includes(term))
+    );
+  });
+
+  // paginated list
+  page = computed(() => {
+    const start = (this.currentPage() - 1) * this.pageSize();
+    return this.filtered().slice(start, start + this.pageSize());
+  });
+
+  remove(id: string){ 
+    this.ds.remove('companies', id).subscribe(); 
+  }
+
+  prevPage() {
+    if (this.currentPage() > 1) {
+      this.currentPage.update(v => v - 1);
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage() * this.pageSize() < this.filtered().length) {
+      this.currentPage.update(v => v + 1);
+    }
+  }
+  // --- Delete flow ---
+  confirmDelete(id: string) {
+    this.selectedId = id;
+    this.deleting.set(true);
+  }
+
+  cancelDelete() {
+    this.selectedId = null;
+    this.deleting.set(false);
+  }
+
+  deleteConfirmed() {
+    if (this.selectedId) {
+      this.ds.remove('companies', this.selectedId).subscribe(() => {
+        this.selectedId = null;
+        this.deleting.set(false);
+      });
+    }
+  }
+
+
+//Edit flow
+edit(company: any) {
+  this.editCompany = { ...company }; // clone object for safe editing
+  this.editing.set(true);
+}
+
+cancelEdit() {
+  this.editing.set(false);
+  this.editCompany = null;
+}
+
+update() {
+  if (!this.editCompany) return;
+
+  this.ds.update<any>('companies', this.editCompany.id, this.editCompany)
+    .subscribe(() => {
+      this.editing.set(false);
+      this.editCompany = null;
+    });
+}
+// --- View flow ---
+  view(company: Company): void {
+    this.selectedcompany = company;
+  
+    const modalEl = document.getElementById('viewCompanyModal');
+    if (modalEl) {
+      const modal = new Modal(modalEl);
+      modal.show();
+    }
+  }
+}
