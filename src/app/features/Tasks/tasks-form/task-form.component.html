@@ -1,0 +1,69 @@
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Create Task</h3>
+  </div>
+  <div class="card p-3">
+    <form [formGroup]="f" (ngSubmit)="save()">
+      <div class="row g-3">
+        
+        <!-- Title -->
+        <div class="col-md-6">
+          <label class="form-label text-white">Title</label>
+          <input class="form-control" formControlName="title" placeholder="Task Title">
+          <div class="text-danger small" *ngIf="f.controls['title'].touched && f.controls['title'].invalid">
+            Title is required
+          </div>
+        </div>
+
+        <!-- Description -->
+        <div class="col-md-6">
+          <label class="form-label text-white">Description</label>
+          <textarea class="form-control" rows="3" formControlName="description" placeholder="Task Description"></textarea>
+        </div>
+
+        <!-- Due Date -->
+        <div class="col-md-4">
+          <label class="form-label text-white">Due Date</label>
+          <input type="date" class="form-control" formControlName="dueDate">
+          <div class="text-danger small" *ngIf="f.controls['dueDate'].touched && f.controls['dueDate'].invalid">
+            Due Date is required
+          </div>
+        </div>
+
+        <!-- Is Completed -->
+        <div class="col-md-2 d-flex align-items-center">
+          <div class="form-check mt-4">
+            <input class="form-check-input" type="checkbox" formControlName="isCompleted">
+            <label class="form-check-label text-white">Completed</label>
+          </div>
+        </div>
+
+        <!-- Entity Type -->
+        <div class="col-md-3">
+          <label class="form-label text-white">Entity Type</label>
+          <select class="form-select" formControlName="entityType">
+            <option value="Lead">Lead</option>
+            <option value="Contact">Contact</option>
+            <option value="Company">Company</option>
+            <option value="Deal">Deal</option>
+          </select>
+        </div>
+
+        <!-- Entity ID -->
+        <div class="col-md-3">
+          <label class="form-label text-white">Entity ID</label>
+          <input class="form-control" formControlName="entityId" placeholder="Related Entity ID">
+          <div class="text-danger small" *ngIf="f.controls['entityId'].touched && f.controls['entityId'].invalid">
+            Entity ID is required
+          </div>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-primary" [disabled]="f.invalid">
+          <i class="bi bi-check2"></i> Save
+        </button>
+        <button type="button" class="btn btn-outline-light" (click)="router.navigateByUrl('/tasks')">Cancel</button>
+      </div>
+    </form>
+  </div>

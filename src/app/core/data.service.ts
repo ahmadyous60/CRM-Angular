@@ -1,7 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
-import type { Task, Note, Event } from './model'; 
+// import type { Task, Note, Event } from './model'; 
+import { Task } from './models/task.model';
+import { Note } from './models/note.model';
+import { Event } from './models/event.model';
 
 type Key = 'leads' | 'deals' | 'contacts' | 'companies';
 

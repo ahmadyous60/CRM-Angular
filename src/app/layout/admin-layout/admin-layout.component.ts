@@ -6,16 +6,6 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   selector: 'app-admin-layout',
   standalone: true,
   imports: [RouterOutlet, TopbarComponent, SidebarComponent],
-  template: `
-  <div class="d-flex min-vh-100">
-    <app-sidebar class="sidebar p-3" style="width:260px"></app-sidebar>
-    <div class="flex-grow-1 d-flex flex-column">
-      <app-topbar></app-topbar>
-      <main class="p-4">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
-  </div>
-  `
+  templateUrl: './admin-layout.component.html'
 })
 export class AdminLayoutComponent {}

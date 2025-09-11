@@ -62,7 +62,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap, map, catchError } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { User } from './model';
+import { User } from '../core/models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

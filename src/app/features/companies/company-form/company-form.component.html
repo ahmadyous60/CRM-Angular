@@ -1,0 +1,28 @@
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0">Create Company</h3>
+  </div>
+  <div class="card p-3">
+    <form [formGroup]="f" (ngSubmit)="save()">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label text-white">Company Name</label>
+          <input class="form-control" formControlName="name" placeholder="Enter Company Name">
+          <div class="text-danger small" *ngIf="f.controls['name'].touched && f.controls['name'].invalid">Company name is required</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-white">Industry</label>
+          <input class="form-control" formControlName="industry" placeholder="e.g., Technology, Healthcare">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label text-white">Website</label>
+          <input class="form-control" formControlName="website" placeholder="https://example.com">
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-4">
+        <button class="btn btn-primary" [disabled]="f.invalid">
+          <i class="bi bi-check2"></i> Save
+        </button>
+        <button type="button" class="btn btn-outline-light" (click)="router.navigateByUrl('/companies')">Cancel</button>
+      </div>
+    </form>
+  </div>

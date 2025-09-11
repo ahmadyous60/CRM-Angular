@@ -1,0 +1,26 @@
+.custom-scroll {
+  overflow-x: auto;
+  width: 100%;
+  max-width: calc(100vw - 250px); // Adjust based on your sidebar width
+  white-space: nowrap;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+.table {
+  min-width: 1400px; 
+}
