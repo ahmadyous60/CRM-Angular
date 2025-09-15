@@ -54,3 +54,19 @@
   color: #6c757d;             // Optional: subtle muted tone
 }
 
+.modal-content {
+  border-radius: 0.75rem;
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

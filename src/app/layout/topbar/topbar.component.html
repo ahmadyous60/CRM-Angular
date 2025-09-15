@@ -6,11 +6,5 @@
 
       <div class="d-flex align-items-center gap-3 text-white">
         <span *ngIf="auth.currentUser() as u">👤 {{ u.name }}</span>
-        <!-- <button 
-          *ngIf="auth.currentUser()" 
-          class="btn btn-sm btn-outline-light" 
-          (click)="logout()">
-          Logout
-        </button> -->
       </div>
     </nav>

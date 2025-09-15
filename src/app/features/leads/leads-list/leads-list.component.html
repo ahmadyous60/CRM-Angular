@@ -117,58 +117,60 @@
   </div>
 
   <!-- Edit Modal -->
-<div class="modal fade show d-block" *ngIf="editing()" style="background: rgba(0,0,0,0.5);" tabindex="-1">
-  <div class="modal-dialog">
+<div class="modal fade show d-block" *ngIf="editing()" tabindex="-1" aria-labelledby="editLeadModalLabel" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
     <div class="modal-content">
       <form #editForm="ngForm" (ngSubmit)="update()">
         <div class="modal-header">
-          <h5 class="modal-title">Update Lead</h5>
-          <button type="button" class="btn-close" (click)="cancelEdit()"></button>
+          <h5 class="modal-title" id="editLeadModalLabel">Update Lead</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="cancelEdit()"></button>
         </div>
 
         <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label">Name</label>
-            <input type="text" class="form-control" [(ngModel)]="editLead!.name" name="name" required>
-          </div>
+          <!-- Form Fields -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-control" [(ngModel)]="editLead!.name" name="name" required>
+            </div>
 
-          <div class="mb-3">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-control" [(ngModel)]="editLead!.email" name="email" required>
-          </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" [(ngModel)]="editLead!.email" name="email" required>
+            </div>
 
-          <div class="mb-3">
-            <label class="form-label">Phone</label>
-            <input type="text" class="form-control" [(ngModel)]="editLead!.phone" name="phone">
-          </div>
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-control" [(ngModel)]="editLead!.phone" name="phone" inputmode="tel" autocomplete="tel">
+            </div>
 
-          <div class="mb-3">
-            <label class="form-label">Status</label>
-            <select class="form-select" [(ngModel)]="editLead!.status" name="status">
-              <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
-            </select>
-          </div>
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select class="form-select" [(ngModel)]="editLead!.status" name="status">
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+              </select>
+            </div>
 
-          <div class="mb-3">
-            <label class="form-label">Source</label>
-            <select class="form-select" [(ngModel)]="editLead!.source" name="source">
-              <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
-            </select>
-          </div>
+            <div class="col-md-6">
+              <label class="form-label">Source</label>
+              <select class="form-select" [(ngModel)]="editLead!.source" name="source">
+                <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
+              </select>
+            </div>
 
-          <div class="mb-3">
-            <label class="form-label">Product Category</label>
-            <select class="form-select" [(ngModel)]="editLead!.productCategory" name="productCategory" 
-                    (ngModelChange)="onCategoryChange($event)">
-              <option *ngFor="let c of productCategories" [value]="c">{{ c }}</option>
-            </select>
-          </div>
+            <div class="col-md-6">
+              <label class="form-label">Product Category</label>
+              <select class="form-select" [(ngModel)]="editLead!.productCategory" name="productCategory" (ngModelChange)="onCategoryChange($event)">
+                <option *ngFor="let c of productCategories" [value]="c">{{ c }}</option>
+              </select>
+            </div>
 
-          <div class="mb-3">
-            <label class="form-label">Product</label>
-            <select class="form-select" [(ngModel)]="editLead!.product" name="product">
-              <option *ngFor="let p of availableProducts" [value]="p">{{ p }}</option>
-            </select>
+            <div class="col-md-6">
+              <label class="form-label">Product</label>
+              <select class="form-select" [(ngModel)]="editLead!.product" name="product">
+                <option *ngFor="let p of availableProducts" [value]="p">{{ p }}</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -180,6 +182,7 @@
     </div>
   </div>
 </div>
+
 
   <!-- Delete Modal -->
   <div class="modal fade show d-block" *ngIf="deleting()" style="background: rgba(0,0,0,0.5);" tabindex="-1">

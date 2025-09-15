@@ -5,11 +5,14 @@ import { NgFor, DatePipe, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Contact } from '../../../core/models/contact.model';
 import { Modal } from 'bootstrap';
+import { TasksListComponent } from "../../Tasks/tasks-list/task-list.component";
+import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
+import { EventsListComponent } from "../../Events/events-list/event-list.component";
 
 @Component({
   selector: 'app-contacts-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf],
+  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, TasksListComponent, NotesListComponent, EventsListComponent],
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.scss'],
 })

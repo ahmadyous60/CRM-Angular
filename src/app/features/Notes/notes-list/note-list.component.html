@@ -26,7 +26,7 @@
           <thead>
             <tr>
               <th>Content</th>
-              <th>Entity</th>
+              <!-- <th>Entity</th> -->
               <th>Created At</th>
               <th class="text-end">Actions</th>
             </tr>
@@ -34,7 +34,7 @@
           <tbody>
             <tr *ngFor="let note of paginated()">
               <td class="truncate" [attr.title]="note.content">{{ note.content | truncate:100 }}</td>
-              <td>{{ note.entityType }} ({{ note.entityId }})</td>
+              <!-- <td>{{ note.entityType }} ({{ note.entityId }})</td> -->
               <td>{{ note.createdAt | date:'medium' }}</td>
               <td class="text-end">
                 <div class="d-flex gap-1 justify-content-end">

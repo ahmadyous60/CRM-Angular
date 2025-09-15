@@ -30,7 +30,7 @@
             <th>Description</th>
             <th>Due Date</th>
             <th>Status</th>
-            <th>Entity</th>
+            <!-- <th>Entity</th> -->
             <th class="text-end">Actions</th>
           </tr>
         </thead>
@@ -44,7 +44,7 @@
                 {{ t.isCompleted ? 'Completed' : 'Pending' }}
               </span>
             </td>
-            <td>{{ t.entityType }} ({{ t.entityId }})</td>
+            <!-- <td>{{ t.entityType }} ({{ t.entityId }})</td> -->
             <td class="text-end">
               <div class="d-flex justify-content-end align-items-center gap-1 action-buttons">
                 <button class="btn btn-sm btn-outline-primary" title="Edit" (click)="edit(t)">

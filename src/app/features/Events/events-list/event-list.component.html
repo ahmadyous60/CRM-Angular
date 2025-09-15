@@ -28,7 +28,7 @@
               <th>Subject</th>
               <th>Start</th>
               <th>End</th>
-              <th>Entity</th>
+              <!-- <th>Entity</th> -->
               <th class="text-end">Actions</th>
             </tr>
           </thead>
@@ -37,7 +37,7 @@
               <td>{{ event.subject }}</td>
               <td>{{ event.startTime | date:'short' }}</td>
               <td>{{ event.endTime | date:'short' }}</td>
-              <td>{{ event.entityType }} ({{ event.entityId }})</td>
+              <!-- <td>{{ event.entityType }} ({{ event.entityId }})</td> -->
               <td class="text-end">
                 <div class="d-flex gap-1 justify-content-end">
                   <button class="btn btn-sm btn-outline-primary" (click)="edit(event)" title="Edit">
