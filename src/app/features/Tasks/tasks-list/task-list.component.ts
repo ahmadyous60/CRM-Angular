@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { DataService} from '../../../core/data.service';
 import { FormsModule } from '@angular/forms';
 import { NgFor, DatePipe, NgIf, CommonModule } from '@angular/common';
-import { Task } from '../../../core/models/task.model';
+import { Task } from '../../../models/task.model';
 import { Modal } from 'bootstrap';
 import { Input } from '@angular/core';
 import { OnChanges, SimpleChanges } from '@angular/core'; 
@@ -21,7 +21,6 @@ export class TasksListComponent implements OnChanges {
   @Input() entityId!: string;
   @Input() mode: 'full' | 'compact' = 'full';  
   
-
   tasks = signal<Task[]>([]);
   q = signal('');
   page = signal(1);
@@ -55,26 +54,17 @@ export class TasksListComponent implements OnChanges {
 
   constructor(private ds: DataService ,private cdRef: ChangeDetectorRef) {}
 
-  // ngOnInit() {
-  //   if (this.entityId) {
-  //     this.loadTasks();
-  //   }
-  // }
-ngOnInit() {
-  if (this.entityId) {
-    this.loadTasks(); // entity-based
-  } else {
-    console.log('Loading all tasks...');
-    this.ds.getAllTasks().subscribe(tasks => {
-      this.tasks.set(tasks);
-    });
+ 
+  ngOnInit() {
+    if (this.entityId) {
+      this.loadTasks(); // entity-based
+    } else {
+      console.log('Loading all tasks...');
+      this.ds.getAllTasks().subscribe(tasks => {
+        this.tasks.set(tasks);
+      });
+    }
   }
-}
-  // private loadTasks() {
-  //   this.ds.getTasks(this.entityType, this.entityId).subscribe(tasks => {
-  //     this.tasks.set(tasks);
-  //   });
-  // }
 
   // pagination helpers...
   currentPage = () => this.page();
@@ -166,4 +156,5 @@ ngOnChanges(changes: SimpleChanges) {
   }
   this.cdRef.detectChanges(); // Ensure view updates after changes
 }
+ 
 }

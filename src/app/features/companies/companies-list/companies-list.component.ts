@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { DataService } from '../../../core/data.service';
 import { NgFor, DatePipe, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Company } from '../../../core/models/company.model';
+import { Company } from '../../../models/company.model';
 import { Modal } from 'bootstrap';
 
 @Component({

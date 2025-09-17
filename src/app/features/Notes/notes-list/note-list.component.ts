@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { DataService } from '../../../core/data.service';
-import { Note } from '../../../core/models/note.model';
+import { Note } from '../../../models/note.model';
 import { TruncatePipe } from './truncate.pipe';
 import { signal, computed } from '@angular/core';
 
@@ -18,7 +18,6 @@ export class NotesListComponent implements OnInit, OnChanges {
   @Input() entityType: string = 'Lead';
   @Input() entityId?: string;
   @Input() mode: 'full' | 'compact' = 'full';
-
   // Signals
   notes = signal<Note[]>([]);
   q = signal('');

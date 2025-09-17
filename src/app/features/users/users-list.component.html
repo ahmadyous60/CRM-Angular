@@ -1,0 +1,22 @@
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Roles</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.username }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.roles.join(', ') }}</td>
+        <td>
+          <button class="btn btn-sm btn-primary" (click)="editUser(user.id)">Edit</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

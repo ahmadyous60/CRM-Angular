@@ -16,6 +16,8 @@ import { NotesListComponent } from './features/Notes/notes-list/note-list.compon
 import { NoteFormComponent } from './features/Notes/notes-form/note-form.component';
 import { EventsListComponent } from './features/Events/events-list/event-list.component';
 import { EventFormComponent } from './features/Events/events-form/event-form.component';
+import { RoleGuard } from './core/role-guard';
+import { UsersListComponent } from './features/users/users-list.component';
 
 export const routes: Routes = [
   {path: 'login' , loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)},
@@ -37,28 +39,31 @@ export const routes: Routes = [
     component: AdminLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: 'leads', pathMatch: 'full' },
-      { path: 'leads', component: LeadsListComponent, title: 'Leads' },
-      { path: 'leads/new', component: LeadFormComponent, title: 'Create Lead' },
+      // { path: '', redirectTo: 'leads', pathMatch: 'full' },
+      { path: 'leads', component: LeadsListComponent, title: 'Leads', canActivate:[RoleGuard], data: { roles: ['admin', 'superadmin'] } },
+      { path: 'leads/new', component: LeadFormComponent, title: 'Create Lead' , canActivate:[RoleGuard], data: { roles: ['admin', 'superadmin'] } },
 
-      { path: 'deals', component: DealsListComponent, title: 'Deals' },
-      { path: 'deals/new', component: DealFormComponent, title: 'Create Deal' },
+      { path: 'deals', component: DealsListComponent, title: 'Deals' , canActivate:[RoleGuard], data: { roles: ['admin', 'superadmin'] }},
+      { path: 'deals/new', component: DealFormComponent, title: 'Create Deal' , canActivate:[RoleGuard], data: { roles: ['admin', 'superadmin'] }},
 
-      { path: 'contacts', component: ContactsListComponent, title: 'Contacts' },
-      { path: 'contacts/new', component: ContactFormComponent, title: 'Create Contact' },
+      { path: 'contacts', component: ContactsListComponent, title: 'Contacts' , canActivate:[RoleGuard], data: { roles: ['user','admin', 'superadmin'] }},
+      { path: 'contacts/new', component: ContactFormComponent, title: 'Create Contact', canActivate:[RoleGuard], data: { roles: ['admin', 'superadmin'] } },
 
-      { path: 'companies', component: CompaniesListComponent, title: 'Companies' },
-      { path: 'companies/new', component: CompanyFormComponent, title: 'Create Company' },
+      { path: 'companies', component: CompaniesListComponent, title: 'Companies' , canActivate:[RoleGuard], data: { roles: ['user','admin', 'superadmin'] } },
+      { path: 'companies/new', component: CompanyFormComponent, title: 'Create Company',  canActivate:[RoleGuard], data: { roles: ['admin', 'superadmin'] } },
       {path: 'tasks' , component: TasksListComponent, title: 'Tasks'},
       {path: 'tasks/new', component: TaskFormComponent, title: 'Create Task' },
       {path: 'notes' , component: NotesListComponent, title: 'Notes' },
       {path: 'notes/new', component: NoteFormComponent, title: 'Create Note' },
       {path: 'events', component: EventsListComponent, title: 'Events' },
       {path: 'events/new', component: EventFormComponent, title: 'Create Event' },
+
+      {path: 'users', component: UsersListComponent, title: 'Users' , canActivate:[RoleGuard], data: { roles: ['superadmin'] } }
       
 
 
     ]
+    
   },
   { path: '**', redirectTo: '/login' }
 ];

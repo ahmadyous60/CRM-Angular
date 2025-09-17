@@ -322,14 +322,17 @@
 
 
             <!-- Tasks Tab -->
-                  <div class="tab-pane fade" id="tasks" role="tabpanel">
-                    <app-tasks-list
-                      *ngIf="selectedLead?.id"
-                      [entityType]="'Lead'" 
-                      [entityId]="selectedLead?.id || ''"
-                      mode="compact">
-                    </app-tasks-list>
-                  </div>
+                    <div 
+                        class="tab-pane fade" 
+                        id="tasks" 
+                        role="tabpanel">
+                        <app-tasks-list
+                          *ngIf="selectedLead?.id"
+                          [entityType]="'Lead'" 
+                          [entityId]="selectedLead?.id || ''"
+                          mode="compact">
+                        </app-tasks-list>
+                      </div>
                 <!-- Notes Tab -->
                 <div class="tab-pane fade" id="notes" role="tabpanel">
                     <app-notes-list

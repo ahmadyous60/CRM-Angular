@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { DataService } from '../../../core/data.service';
-import { Event } from '../../../core/models/event.model';
+import { Event } from '../../../models/event.model';
 import { signal, computed } from '@angular/core';
 
 @Component({
@@ -118,4 +118,6 @@ export class EventsListComponent implements OnInit, OnChanges {
       error: err => console.error('Delete failed:', err)
     });
   }
+
+ 
 }

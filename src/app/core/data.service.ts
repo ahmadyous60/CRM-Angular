@@ -2,16 +2,17 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 // import type { Task, Note, Event } from './model'; 
-import { Task } from './models/task.model';
-import { Note } from './models/note.model';
-import { Event } from './models/event.model';
+import { Task } from '../models/task.model';
+import { Note } from '../models/note.model';
+import { Event } from '../models/event.model';
+import { environment } from '../../environments/environment';
 
 type Key = 'leads' | 'deals' | 'contacts' | 'companies';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
   private baseUrl = 'https://localhost:7298/api';
-
+    // private baseUrl = `${environment.apiUrl}/api`;
   // 🔹 Reactive signals
   tasksSignal = signal<Task[]>([]);
   notesSignal = signal<Note[]>([]);

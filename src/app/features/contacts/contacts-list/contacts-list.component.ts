@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { DataService } from '../../../core/data.service';
 import { NgFor, DatePipe, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Contact } from '../../../core/models/contact.model';
+import { Contact } from '../../../models/contact.model';
 import { Modal } from 'bootstrap';
 import { TasksListComponent } from "../../Tasks/tasks-list/task-list.component";
 import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
@@ -17,6 +17,8 @@ import { EventsListComponent } from "../../Events/events-list/event-list.compone
   styleUrls: ['./contact-list.component.scss'],
 })
 export class ContactsListComponent {
+
+ 
   // 🔧 State
   editing = signal(false);
   deleting = signal(false);
@@ -121,4 +123,5 @@ export class ContactsListComponent {
       modal.show();
     }
   }
+   
 }

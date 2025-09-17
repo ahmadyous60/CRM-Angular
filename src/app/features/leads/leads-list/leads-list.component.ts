@@ -1,16 +1,16 @@
 import { Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DataService } from '../../../core/data.service';
-import type { Lead} from '../../../core/models/lead.model';
-import type { Task } from '../../../core/models/task.model';
-import type { Note } from '../../../core/models/note.model';
-import type { Event } from '../../../core/models/event.model';
+import type { Lead} from '../../../models/lead.model';
+import type { Task } from '../../../models/task.model';
+import type { Note } from '../../../models/note.model';
+import type { Event } from '../../../models/event.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Modal } from 'bootstrap';
-import { productOptions } from '../../../core/models/product-options.const';
+import { productOptions } from '../../../models/product-options.const';
 import { TasksListComponent } from '../../Tasks/tasks-list/task-list.component';
 import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
 import { EventsListComponent } from "../../Events/events-list/event-list.component";
@@ -201,6 +201,7 @@ updateAvailableProducts(category: string) {
     if (lead.id) {
       this.ds.getNotes("Lead", lead.id).subscribe(res => this.notes = res);
       this.ds.getEvents("Lead", lead.id).subscribe(res => this.events = res);
+      this.ds.getTasks("Lead", lead.id).subscribe(res => this.tasks = res);
     }
 
     const modalEl = document.getElementById('viewLeadModal');
@@ -223,5 +224,6 @@ getStatusBadgeClass(status: Lead['status']): string {
     default: return 'bg-secondary';
   }
 }
-
+  
+ 
 }
