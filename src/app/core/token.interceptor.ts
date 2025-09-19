@@ -1,62 +1,47 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent
-} from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+// token.interceptor.ts
+import { inject } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { catchError, switchMap, throwError } from 'rxjs';
 
-@Injectable()
-export class TokenInterceptor implements HttpInterceptor {
-  constructor(private auth: AuthService) {}
+export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
+  const auth = inject(AuthService);
+  const currentUser = auth.currentUser();
+  const token = currentUser?.token;
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const currentUser = this.auth.currentUser();
-    let token = currentUser?.token;
-
-    let cloned = req;
-
-    if (token) {
-      cloned = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-    }
-
-    return next.handle(cloned).pipe(
-      catchError(err => {
-        if (err.status === 401) {
-          return this.handle401(req, next);
-        }
-        return throwError(() => err);
-      })
-    );
+  let cloned = req;
+  if (token) {
+    cloned = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   }
 
-  private handle401(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return this.auth.refreshToken().pipe(
-      switchMap(success => {
-        if (success) {
-          const newUser = this.auth.currentUser();
-          const newToken = newUser?.token;
+  return next(cloned).pipe(
+    catchError(err => {
+      if (err.status === 401) {
+        return auth.refreshToken().pipe(
+          switchMap(success => {
+            if (success) {
+              const newUser = auth.currentUser();
+              const newToken = newUser?.token;
 
-          if (newToken) {
-            const retryReq = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${newToken}`
+              if (newToken) {
+                const retryReq = req.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${newToken}`
+                  }
+                });
+                return next(retryReq);
               }
-            });
-            return next.handle(retryReq);
-          }
-        }
-
-        this.auth.logout();
-        return throwError(() => new Error('Session expired. Please login again.'));
-      })
-    );
-  }
-}
+            }
+            auth.logout();
+            return throwError(() => new Error('Session expired. Please login again.'));
+          })
+        );
+      }
+      return throwError(() => err);
+    })
+  );
+};

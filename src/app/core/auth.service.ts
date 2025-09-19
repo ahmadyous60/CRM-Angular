@@ -258,4 +258,28 @@ export class AuthService {
     const user = this.currentUser();
     return user?.roles?.includes(role) ?? false;
   }
+
+  updateUserRoles(userId: string, roles: string[]): Observable<any> {
+  return this.http.put(`${this.API_URL}/users/${userId}/roles`, { roles });
+}
+getAllUsers(): Observable<User[]> {
+  return this.http.get<any[]>(`${this.API_URL}/users`).pipe(
+    map(res =>
+      res.map(u => ({
+        id: u.id,
+        username: u.userName,   // ✅ map here too
+        email: u.email,
+        name: u.name,
+        roles: u.roles,
+        permissions: u.permissions || [],
+        token: '',
+        refreshToken: ''
+      }))
+    )
+  );
+}
+deleteUser(userId: string): Observable<any> {
+  return this.http.delete(`${this.API_URL}/users/${userId}`);
+}
+
 }

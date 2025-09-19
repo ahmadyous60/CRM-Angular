@@ -1,22 +1,141 @@
-<div class="table-responsive">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Roles</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.username }}</td>
-        <td>{{ user.email }}</td>
-        <td>{{ user.roles.join(', ') }}</td>
-        <td>
-          <button class="btn btn-sm btn-primary" (click)="editUser(user.id)">Edit</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="container py-4">
+  <h3 class="mb-4">👥 User Management</h3>
+
+  <!-- User Table -->
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Full Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Roles</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.roles.join(', ') }}</td>
+          <td class="text-center">
+            <!-- View Button -->
+            <button class="btn btn-sm btn-outline-info me-1"
+                    (click)="openUserModal(user)"
+                    title="View Profile"
+                    data-bs-toggle="modal"
+                    data-bs-target="#viewUserModal">
+              <i class="bi bi-eye"></i>
+            </button>
+
+            <!-- Delete Button (Superadmin only) -->
+            <button class="btn btn-sm btn-outline-danger"
+                    *ngIf="authService.hasRole('superadmin')"
+                    (click)="deleteUser(user)"
+                    title="Delete User">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: View & Edit User -->
+<div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered custom-modal-width">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+
+      <!-- Modal Header -->
+      <div class="modal-header bg-primary text-white rounded-top-4 px-4 py-3">
+        <h5 class="modal-title fw-semibold d-flex align-items-center" id="viewUserLabel">
+          <i class="bi bi-person-circle me-2 fs-5"></i> User Information
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body bg-light px-4 py-4">
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mb-4" id="userTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active text-secondary" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+              <i class="bi bi-person-lines-fill me-1"></i> Profile
+            </button>
+          </li>
+          <li class="nav-item" role="presentation" *ngIf="authService.hasRole('superadmin')">
+            <button class="nav-link text-secondary" id="roles-tab" data-bs-toggle="tab" data-bs-target="#roles" type="button" role="tab">
+              <i class="bi bi-shield-lock me-1"></i> Roles
+            </button>
+          </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content" id="userTabContent">
+
+          <!-- Profile Tab -->
+          <div class="tab-pane fade show active" id="profile" role="tabpanel">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Full Name</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-person-fill text-primary me-2"></i> {{ selectedUser?.name }}
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Username</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-person-badge-fill text-info me-2"></i> {{ selectedUser?.username }}
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Email</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-envelope-fill text-danger me-2"></i> {{ selectedUser?.email }}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Roles Tab -->
+          <div class="tab-pane fade" id="roles" role="tabpanel">
+            <div class="row g-3">
+              <div class="col-6 col-md-4" *ngFor="let role of ['user','admin','superadmin']">
+                <div class="form-check bg-white p-3 rounded-3 shadow-sm border">
+                  <input class="form-check-input"
+                         type="checkbox"
+                         [checked]="newRoles.includes(role)"
+                         (change)="toggleRole(role, $event)">
+                  <label class="form-check-label fw-semibold ms-2">{{ role }}</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-end">
+              <button class="btn btn-success rounded-pill px-4 me-2" (click)="saveRoles()">
+                <i class="bi bi-check-circle me-1"></i> Save
+              </button>
+              <button class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+                <i class="bi bi-x-circle me-1"></i> Cancel
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer bg-white rounded-bottom-4 px-4 py-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i> Close
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>

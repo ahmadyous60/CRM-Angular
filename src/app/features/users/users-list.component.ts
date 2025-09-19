@@ -1,27 +1,67 @@
+// users-list.component.ts
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { Router } from '@angular/router';
-import { NgFor } from '@angular/common';
+import { AuthService } from '../../core/auth.service';
+import { User } from '../../models/user.model';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
-  imports: [NgFor]
+  imports: [NgIf,NgFor]
 })
 export class UsersListComponent implements OnInit {
-  users: any[] = [];
-  apiUrl = `${environment.apiUrl}/Users`;
+  users: User[] = [];
+  selectedUser: User | null = null;
+  newRoles: string[] = [];
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(public authService: AuthService) {}
 
   ngOnInit(): void {
-    this.http.get<any[]>(this.apiUrl).subscribe(res => {
-      this.users = res;
+    this.loadUsers();
+  }
+  openUserModal(user: any): void {
+  this.selectedUser = user;
+  this.newRoles = [...user.roles]; // clone roles to avoid direct mutation
+}
+
+  loadUsers(): void {
+    this.authService.getAllUsers().subscribe(users => {
+      this.users = users;
     });
   }
 
-  editUser(userId: string) {
-    this.router.navigate(['/users', userId]);
+  editRoles(user: User): void {
+    this.selectedUser = user;
+    this.newRoles = [...user.roles]; // copy roles into editable array
   }
+
+  toggleRole(role: string, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.checked) {
+      if (!this.newRoles.includes(role)) {
+        this.newRoles.push(role);
+      }
+    } else {
+      this.newRoles = this.newRoles.filter(r => r !== role);
+    }
+  }
+
+  saveRoles(): void {
+    if (!this.selectedUser) return;
+    this.authService.updateUserRoles(this.selectedUser.id, this.newRoles).subscribe(() => {
+      this.loadUsers(); // reload after update
+      this.selectedUser = null;
+    });
+  }
+  viewUser(user: User): void {
+  alert(`Viewing user: ${user.username}\nEmail: ${user.email}\nRoles: ${user.roles.join(', ')}`);
+}
+
+deleteUser(user: User): void {
+  if (confirm(`Are you sure you want to delete ${user.username}?`)) {
+    this.authService.deleteUser(user.id).subscribe(() => {
+      this.loadUsers(); // reload list after deletion
+    });
+  }
+}
 }
