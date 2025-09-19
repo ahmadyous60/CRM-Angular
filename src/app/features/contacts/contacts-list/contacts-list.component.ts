@@ -8,11 +8,12 @@ import { Modal } from 'bootstrap';
 import { TasksListComponent } from "../../Tasks/tasks-list/task-list.component";
 import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
 import { EventsListComponent } from "../../Events/events-list/event-list.component";
+import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
 
 @Component({
   selector: 'app-contacts-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, TasksListComponent, NotesListComponent, EventsListComponent],
+  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, TasksListComponent, NotesListComponent, EventsListComponent, HasPermissionDirective],
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.scss'],
 })
@@ -33,7 +34,7 @@ export class ContactsListComponent {
   // Contacts data
   contacts: () => Contact[];
 
-  constructor(public ds: DataService) {
+  constructor(public ds: DataService ) {
     this.contacts = this.ds.list<Contact>('contacts');
   }
 

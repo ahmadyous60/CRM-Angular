@@ -5,11 +5,13 @@ import { NgFor, DatePipe, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Company } from '../../../models/company.model';
 import { Modal } from 'bootstrap';
+import { AuthService } from '../../../core/auth.service';
+import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
 
 @Component({
   selector: 'app-companies-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf],
+  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, HasPermissionDirective],
   templateUrl: './companies-list.component.html'
 })
 export class CompaniesListComponent {
@@ -26,7 +28,7 @@ export class CompaniesListComponent {
 
   companies: () => any[];
 
-  constructor(public ds: DataService) {
+  constructor(public ds: DataService, public auth: AuthService) {
     this.companies = this.ds.list<any>('companies');
   }
 

@@ -14,12 +14,13 @@ import { productOptions } from '../../../models/product-options.const';
 import { TasksListComponent } from '../../Tasks/tasks-list/task-list.component';
 import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
 import { EventsListComponent } from "../../Events/events-list/event-list.component";
+import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
 
 @Component({
   selector: 'app-leads-list',
   standalone: true,
   styleUrls: ['./lead-list.scss'],
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, CommonModule, TasksListComponent, NotesListComponent, EventsListComponent],
+  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, CommonModule, TasksListComponent, NotesListComponent, EventsListComponent, HasPermissionDirective],
   templateUrl: './leads-list.component.html',
 })
 export class LeadsListComponent {

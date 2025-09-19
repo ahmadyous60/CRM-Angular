@@ -1,6 +1,6 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
   <h3 class="mb-0">Companies</h3>
-  <a routerLink="/companies/new" class="btn btn-primary">
+  <a  routerLink="/companies/new" class="btn btn-primary" *hasPermission="'Companies.Add'">
     <i class="bi bi-plus-lg"></i> New Company
   </a>
 </div>
@@ -46,13 +46,13 @@
           </td>
           <td>{{ company.createdAt | date: 'medium' }}</td>
           <td class="text-end">
-            <button class="btn btn-sm btn-outline-primary me-0" (click)="edit(company)">
+            <button *hasPermission="'Companies.Edit'" class="btn btn-sm btn-outline-primary me-0" (click)="edit(company)">
               <i class="bi bi-pencil"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger ms-2" (click)="confirmDelete(company.id)">
+            <button *hasPermission="'Companies.Delete'" class="btn btn-sm btn-outline-danger ms-2" (click)="confirmDelete(company.id)">
                 <i class="bi bi-trash"></i>
               </button>
-              <button class="btn btn-sm btn-outline-info ms-2" (click)="view(company)">
+              <button *hasPermission="'Companies.View'" class="btn btn-sm btn-outline-info ms-2" (click)="view(company)">
               <i class="bi bi-eye"></i>
             </button>
           </td>

@@ -5,11 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { NgFor, DatePipe, NgIf, CommonModule } from '@angular/common';
 import { Deal } from '../../../models/deal.model';
 import { Modal } from 'bootstrap';
+import { AuthService } from '../../../core/auth.service';
+import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
 
 @Component({
   standalone: true,
   selector: 'app-deals-list',
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf , CommonModule],
+  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf , CommonModule, HasPermissionDirective],
   templateUrl: './deals-list.component.html',
 })
 export class DealsListComponent {
@@ -28,7 +30,7 @@ export class DealsListComponent {
   paginated: () => any[];
   totalPages: () => number;
 
-  constructor(private ds: DataService) {
+  constructor(private ds: DataService, public auth: AuthService) {
     this.deals = this.ds.list<any>('deals');
 
     this.filtered = computed(() => {
