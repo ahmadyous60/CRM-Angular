@@ -9,7 +9,7 @@ export class PermissionGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const requiredPermission: string = route.data['permission'];
+    const requiredRoles: string[] = route.data['roles']; // 👈 roles array milega
     const currentUser = this.auth.currentUser();
 
     // user login hi nahi hai
@@ -18,10 +18,16 @@ export class PermissionGuard implements CanActivate {
       return false;
     }
 
-    // permission check
-    if (!this.auth.hasPermission(requiredPermission)) {
-      this.router.navigate(['/forbidden']); 
-      return false;
+    // role check
+    if (requiredRoles && requiredRoles.length > 0) {
+      const hasRole = currentUser.roles.some((role: string) =>
+        requiredRoles.includes(role)
+      );
+
+      if (!hasRole) {
+        this.router.navigate(['/contacts']); 
+        return false;
+      }
     }
 
     return true;

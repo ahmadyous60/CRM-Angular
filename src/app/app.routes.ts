@@ -16,7 +16,6 @@ import { NotesListComponent } from './features/Notes/notes-list/note-list.compon
 import { NoteFormComponent } from './features/Notes/notes-form/note-form.component';
 import { EventsListComponent } from './features/Events/events-list/event-list.component';
 import { EventFormComponent } from './features/Events/events-form/event-form.component';
-import { RoleGuard } from './core/role-guard';
 import { UsersListComponent } from './features/users/users-list.component';
 import { PermissionGuard } from './core/permission-guard';
 
@@ -41,7 +40,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       // { path: '', redirectTo: 'leads', pathMatch: 'full' },
-      { path: 'leads', component: LeadsListComponent, title: 'Leads', canActivate:[PermissionGuard], data: { permission: 'Leads.View' } },
+      { path: 'leads', component: LeadsListComponent, title: 'Leads', canActivate:[PermissionGuard], data: { roles: ['admin', 'superadmin'] } },
       { path: 'leads/new', component: LeadFormComponent, title: 'Create Lead' , canActivate:[PermissionGuard], data: { permission: 'Leads.Add' } },
 
       { path: 'deals', component: DealsListComponent, title: 'Deals' , canActivate:[PermissionGuard], data: {permission: 'Deals.View'}},
@@ -59,7 +58,7 @@ export const routes: Routes = [
       {path: 'events', component: EventsListComponent, title: 'Events' },
       {path: 'events/new', component: EventFormComponent, title: 'Create Event' },
 
-      {path: 'users', component: UsersListComponent, title: 'Users' , canActivate:[RoleGuard], data: { roles: ['superadmin'] } }
+      {path: 'users', component: UsersListComponent, title: 'Users' , canActivate:[PermissionGuard], data: { roles: ['superadmin'] } }
       
 
 

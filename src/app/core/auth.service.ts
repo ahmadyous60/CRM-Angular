@@ -260,7 +260,7 @@ export class AuthService {
   }
 
   updateUserRoles(userId: string, roles: string[]): Observable<any> {
-  return this.http.put(`${this.API_URL}/users/${userId}/roles`, { roles });
+  return this.http.put(`${this.API_URL}/users/${userId}/roles`, roles); 
 }
 getAllUsers(): Observable<User[]> {
   return this.http.get<any[]>(`${this.API_URL}/users`).pipe(
