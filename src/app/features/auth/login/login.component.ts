@@ -10,9 +10,11 @@ import { NavigationService } from '../../../core/navigation.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  showPassword: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -43,5 +45,8 @@ export class LoginComponent {
   goToForgotPassword(): void {
     this.navService.isNavigated = true;
     this.router.navigate(['/forgot-password']);
+  }
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 }

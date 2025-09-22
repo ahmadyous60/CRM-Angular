@@ -8,13 +8,15 @@ import { CommonModule } from '@angular/common';
   selector: 'app-signup',
   standalone: true,
   imports: [FormsModule, CommonModule, RouterModule],
-  templateUrl: './signup.component.html'
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent {
   name = '';
   username = '';
   email = '';     // ✅ Added email field
   password = '';
+  showPassword: boolean = false;
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -22,5 +24,8 @@ export class SignupComponent {
     this.auth.signup(this.username, this.password, this.name, this.email).subscribe(() => {
       this.router.navigate(['/login']);
     });
+  }
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 }

@@ -1,103 +1,103 @@
-  <section class="vh-100">
-    <div class="container py-5 h-100">
-      <div class="row d-flex align-items-center justify-content-center h-100">
-        
-        <!-- Image -->
-        <div class="col-md-8 col-lg-7 col-xl-6">
-          <img 
-            src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-            class="img-fluid" 
-            alt="Phone image"
-          >
-        </div>
+<section class="vh-100 d-flex align-items-center justify-content-center bg-gradient" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-6">
+        <div class="card border-0 shadow-lg rounded-4 animate-card">
+          <div class="card-body p-5">
 
-        <!-- Form -->
-        <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-          <form (ngSubmit)="onSignup()" #signupForm="ngForm">
+            <h2 class="text-center mb-4 fw-bold text-gradient animate-title">Create Your CRM Account</h2>
 
-            <!-- Name input -->
-            <div class="form-outline mb-4">
-              <input 
-                type="text" 
-                class="form-control form-control-lg" 
-                placeholder="Enter your name"
-                [(ngModel)]="name" 
-                name="name" 
-                required
-              />
-              <label class="form-label">Name</label>
-              <div class="text-danger" *ngIf="signupForm.submitted && !name">
-                Name is required
+            <form (ngSubmit)="onSignup()" #signupForm="ngForm" novalidate>
+
+              <!-- Name -->
+              <div class="form-floating mb-3 animate-input">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="name" 
+                  placeholder="Name"
+                  [(ngModel)]="name" 
+                  name="name" 
+                  required
+                />
+                <label for="name">Name</label>
               </div>
-            </div>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !name">Name is required</div>
 
-            <!-- Username input -->
-            <div class="form-outline mb-4">
-              <input 
-                type="text" 
-                class="form-control form-control-lg" 
-                placeholder="Enter your username"
-                [(ngModel)]="username" 
-                name="username" 
-                required
-              />
-              <label class="form-label">Username</label>
-              <div class="text-danger" *ngIf="signupForm.submitted && !username">
-                Username is required
+              <!-- Username -->
+              <div class="form-floating mb-3 animate-input">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="username" 
+                  placeholder="Username"
+                  [(ngModel)]="username" 
+                  name="username" 
+                  required
+                />
+                <label for="username">Username</label>
               </div>
-            </div>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !username">Username is required</div>
 
-            <!-- Email input -->
-            <div class="form-outline mb-4">
-              <input 
-                type="email" 
-                class="form-control form-control-lg" 
-                placeholder="Enter your email"
-                [(ngModel)]="email" 
-                name="email" 
-                required
-              />
-              <label class="form-label">Email</label>
-              <div class="text-danger" *ngIf="signupForm.submitted && !email">
-                Email is required
+              <!-- Email -->
+              <div class="form-floating mb-3 animate-input">
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email" 
+                  placeholder="Email"
+                  [(ngModel)]="email" 
+                  name="email" 
+                  required
+                />
+                <label for="email">Email</label>
               </div>
-            </div>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !email">Email is required</div>
 
-            <!-- Password input -->
-            <div class="form-outline mb-4">
-              <input 
-                type="password" 
-                class="form-control form-control-lg" 
-                placeholder="Enter your password"
-                [(ngModel)]="password" 
-                name="password" 
-                required
-              />
-              <label class="form-label">Password</label>
-              <div class="text-danger" *ngIf="signupForm.submitted && !password">
-                Password is required
+              <!-- Password -->
+             <div class="form-floating mb-3 animate-input position-relative">
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  class="form-control" 
+                  id="password" 
+                  placeholder="Password"
+                  [(ngModel)]="password" 
+                  name="password" 
+                  required
+                />
+                <label for="password">Password</label>
+                <button 
+                  type="button" 
+                  class="btn position-absolute top-50 end-0 translate-middle-y me-3 p-0 border-0 bg-transparent"
+                  (click)="togglePassword()" tabindex="-1">
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
               </div>
-            </div>
 
-            <!-- Sign Up Button -->
-            <button 
-              type="submit" 
-              class="btn btn-primary btn-lg w-100" 
-              [disabled]="signupForm.invalid"
-              style="background: linear-gradient(45deg, #6a11cb, #2575fc); border: none;">
-              Sign Up
-            </button>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !password">Password is required</div>
 
-            <!-- Back to Login Button -->
-            <a 
-              routerLink="/login" 
-              class="btn btn-lg w-100 mt-3"
-              style="background: linear-gradient(45deg, #ff6b6b, #f06595); border: none; color: white; text-align: center;">
-              Already have an account? Login
-            </a>
+              <!-- Sign Up Button -->
+              <button 
+                type="submit" 
+                class="btn btn-lg w-100 text-white fw-semibold animate-button"
+                [disabled]="signupForm.invalid"
+                style="background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); border: none;">
+                Sign Up
+              </button>
 
-          </form>
+              <!-- Back to Login -->
+              <a 
+                routerLink="/login" 
+                class="btn btn-lg w-100 mt-3 fw-semibold animate-button-alt"
+                style="background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; border: none;">
+                Already have an account? Login
+              </a>
+
+            </form>
+
+          </div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>

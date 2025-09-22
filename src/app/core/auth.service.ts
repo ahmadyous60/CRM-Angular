@@ -151,14 +151,15 @@ login(username: string, password: string): Observable<User | null> {
         roles: Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
           ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
           : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]],
-        permissions: decoded["Permission"] || []
+        permissions: decoded["Permission"] || [],
+        fullName: decoded["FullName"] || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
       };
 
       const user: User = {
         id: claims.id,
         username: claims.username,
         email: claims.email,
-        name: claims.username,
+        name: claims.fullName,
         roles: claims.roles,
         permissions: claims.permissions,
         token: res.accessToken,
@@ -193,14 +194,15 @@ login(username: string, password: string): Observable<User | null> {
         roles: Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
           ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
           : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]],
-        permissions: decoded["Permission"] || []
+        permissions: decoded["Permission"] || [],
+        fullName: decoded["FullName"] || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
       };
 
       const user: User = {
         id: claims.id,
         username: claims.username,
         email: claims.email ?? '',
-        name: claims.username,
+        name: claims.fullName,
         roles: claims.roles,
         permissions: claims.permissions,
         token: res.accessToken,
