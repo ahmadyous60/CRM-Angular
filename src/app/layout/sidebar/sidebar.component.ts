@@ -35,16 +35,15 @@ import { NgIf } from '@angular/common';
 
 // Sidebar ke routes define kar lo ek constant me
 const sidebarRoutes = [
-  { path: '/leads', label: 'Leads', roles: ['admin', 'superadmin'] },
-  { path: '/deals', label: 'Deals', roles: ['admin', 'superadmin'] },
-  { path: '/contacts', label: 'Contacts', roles: ['user', 'admin', 'superadmin'] },
-  { path: '/companies', label: 'Companies', roles: ['user', 'admin', 'superadmin'] },
-  { path: '/tasks', label: 'Tasks', roles: [] }, 
-  { path: '/notes', label: 'Notes', roles: [] },
-  { path: '/events', label: 'Events', roles: [] },
-  { path: '/users', label: 'Users', roles: ['superadmin'] }
+  { path: '/leads', label: 'Leads', roles: ['admin', 'superadmin'], permissions: ['Leads.View'] },
+  { path: '/deals', label: 'Deals', roles: ['admin', 'superadmin'], permissions: ['Deals.View'] },
+  { path: '/contacts', label: 'Contacts', roles: ['user', 'admin', 'superadmin'], permissions: ['Contacts.View'] },
+  { path: '/companies', label: 'Companies', roles: ['user', 'admin', 'superadmin'], permissions: ['Companies.View'] },
+  { path: '/tasks', label: 'Tasks', roles: [], permissions: [] }, 
+  { path: '/notes', label: 'Notes', roles: [], permissions: [] },
+  { path: '/events', label: 'Events', roles: [], permissions: [] },
+  { path: '/users', label: 'Users', roles: ['superadmin'], permissions: ['Users.View'] }
 ];
-
 @Component({
   selector: 'app-sidebar',
   standalone: true,

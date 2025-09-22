@@ -129,6 +129,7 @@ import { Observable, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
+import { jwtDecode } from "jwt-decode";
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -136,37 +137,86 @@ export class AuthService {
   currentUser = signal<User | null>(null);
 
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
+  
 
-  // ✅ Login
-  login(username: string, password: string): Observable<User | null> {
-    return this.http.post<any>(`${this.API_URL}/login`, { username, password }).pipe(
-      map(res => {
-        const user: User = {
-          id: res.user.id,
-          username: res.user.userName,
-          email: res.user.email,
-          name: res.user.name,
-          roles: res.user.roles,
-          permissions: res.user.permissions, // ✅ add permissions support
-          token: res.accessToken,
-          refreshToken: res.refreshToken
-        };
-        this.setUser(user);
-        return user;
-      }),
-      catchError(err => {
-        this.handleAuthError(err);
-        return of(null);
-      })
-    );
-  }
+login(username: string, password: string): Observable<User | null> {
+  return this.http.post<any>(`${this.API_URL}/login`, { username, password }).pipe(
+    map(res => {
+      const decoded = jwtDecode<any>(res.accessToken);
+
+      const claims = {
+        id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+        username: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+        email: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+        roles: Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
+          ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+          : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]],
+        permissions: decoded["Permission"] || []
+      };
+
+      const user: User = {
+        id: claims.id,
+        username: claims.username,
+        email: claims.email,
+        name: claims.username,
+        roles: claims.roles,
+        permissions: claims.permissions,
+        token: res.accessToken,
+        refreshToken: res.refreshToken
+      };
+
+      this.setUser(user);
+      return user;
+    }),
+    catchError(err => {
+      this.handleAuthError(err);
+      return of(null);
+    })
+  );
+}
+
 
   // ✅ Signup
   signup(username: string, password: string, name: string, email: string): Observable<User | null> {
-    return this.http.post<User>(`${this.API_URL}/signup`, { username, name, email, password }).pipe(
-      switchMap(() => this.login(username, password))
-    );
-  }
+  return this.http.post<{ accessToken: string; refreshToken: string }>(
+    `${this.API_URL}/signup`,
+    { username, name, email, password }
+  ).pipe(
+    map(res => {
+      // Decode JWT to extract roles and permissions
+      const decoded = jwtDecode<any>(res.accessToken);
+
+      const claims = {
+        id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+        username: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+        email: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+        roles: Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
+          ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
+          : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]],
+        permissions: decoded["Permission"] || []
+      };
+
+      const user: User = {
+        id: claims.id,
+        username: claims.username,
+        email: claims.email ?? '',
+        name: claims.username,
+        roles: claims.roles,
+        permissions: claims.permissions,
+        token: res.accessToken,
+        refreshToken: res.refreshToken
+      };
+
+      this.setUser(user);
+      return user;
+    }),
+    catchError(err => {
+      this.handleAuthError(err);
+      return of(null);
+    })
+  );
+}
+
 
   // ✅ Logout
   logout(): void {
