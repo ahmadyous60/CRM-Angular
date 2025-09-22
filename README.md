@@ -24,10 +24,10 @@ A modern Angular-based Customer Relationship Management (CRM) application with c
 
 ### User Interface
 - **Modern Dark Theme**: Beautiful dark theme with Bootstrap 5 and Material Design
-- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
+- **Responsive Design**: Works seamlessly on desktop, tablet, and Laptop devices
 - **Real-time Updates**: Live data updates with Angular Signals
 - **Advanced Filtering**: Search and filter capabilities across all modules
-- **Export Functionality**: Export data to Excel format
+- **Export Functionality**: Export data to Excel format from leads
 - **Interactive UI**: Smooth animations and user-friendly interface
 
 ## 🛠️ Technology Stack
@@ -79,7 +79,7 @@ The Angular application will be available at `http://localhost:4200`
 ### 3. Backend Setup
 ```bash
 # Navigate to backend directory (if separate)
-cd ../CRM-Backend
+cd ../CRMAPI
 
 # Restore packages
 dotnet restore
@@ -100,7 +100,7 @@ The .NET API will be available at `https://localhost:7298`
 - **User**: Standard CRM operations
 
 ### Permissions
-- **Leads**: `Leads.View`, `Leads.Add`, `Leads.Edit`, `Leads.Delete`
+- **Leads**: `Leads.View`, `Leads.Add`, `Leads.Edit`, `Leads.Delete` , `Leads.Export`
 - **Deals**: `Deals.View`, `Deals.Add`, `Deals.Edit`, `Deals.Delete`
 - **Contacts**: `Contacts.View`, `Contacts.Add`, `Contacts.Edit`, `Contacts.Delete`
 - **Companies**: `Companies.View`, `Companies.Add`, `Companies.Edit`, `Companies.Delete`
@@ -421,13 +421,10 @@ export const environment = {
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 📞 Support
 
-For support and questions, please contact the development team or create an issue in the repository.
+For support and questions, please contact the development team, connect with me on [LinkedIn](https://www.linkedin.com/in/ahmad-yousaf21), or create an issue in the repository.
+
 
 ---
 
