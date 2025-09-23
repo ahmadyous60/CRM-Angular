@@ -11,9 +11,10 @@ type Key = 'leads' | 'deals' | 'contacts' | 'companies';
 
 @Injectable({ providedIn: 'root' })
 export class DataService {
-  private baseUrl = 'https://localhost:7298/api';
-    // private baseUrl = `${environment.apiUrl}/api`;
-  // 🔹 Reactive signals
+  // private baseUrl = 'https://localhost:7298/api';
+    private baseUrl = `${environment.apiUrl}`;
+
+  //  Reactive signals
   tasksSignal = signal<Task[]>([]);
   notesSignal = signal<Note[]>([]);
   eventsSignal = signal<Event[]>([]);

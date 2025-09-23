@@ -1,13 +1,13 @@
-// users-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/auth.service';
 import { User } from '../../models/user.model';
 import { NgFor, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
-  imports: [NgIf,NgFor]
+  imports: [NgIf, NgFor, FormsModule]
 })
 export class UsersListComponent implements OnInit {
   users: User[] = [];
@@ -19,10 +19,6 @@ export class UsersListComponent implements OnInit {
   ngOnInit(): void {
     this.loadUsers();
   }
-  openUserModal(user: any): void {
-  this.selectedUser = user;
-  this.newRoles = [...user.roles]; // clone roles to avoid direct mutation
-}
 
   loadUsers(): void {
     this.authService.getAllUsers().subscribe(users => {
@@ -30,38 +26,31 @@ export class UsersListComponent implements OnInit {
     });
   }
 
-  editRoles(user: User): void {
+  openUserModal(user: User): void {
     this.selectedUser = user;
-    this.newRoles = [...user.roles]; // copy roles into editable array
+    this.newRoles = [...user.roles];
   }
 
-  toggleRole(role: string, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.checked) {
-      if (!this.newRoles.includes(role)) {
-        this.newRoles.push(role);
-      }
-    } else {
-      this.newRoles = this.newRoles.filter(r => r !== role);
-    }
+  openDeleteModal(user: User): void {
+    this.selectedUser = user;
   }
 
-  saveRoles(): void {
+  confirmDelete(): void {
     if (!this.selectedUser) return;
-    this.authService.updateUserRoles(this.selectedUser.id, this.newRoles).subscribe(() => {
-      this.loadUsers(); // reload after update
+    this.authService.deleteUser(this.selectedUser.id).subscribe(() => {
+      this.loadUsers();
       this.selectedUser = null;
     });
   }
-  viewUser(user: User): void {
-  alert(`Viewing user: ${user.username}\nEmail: ${user.email}\nRoles: ${user.roles.join(', ')}`);
-}
 
-deleteUser(user: User): void {
-  if (confirm(`Are you sure you want to delete ${user.username}?`)) {
-    this.authService.deleteUser(user.id).subscribe(() => {
-      this.loadUsers(); // reload list after deletion
+  updateRole(user: User): void {
+    const newRole = user.roles[0];
+    this.authService.updateUserRoles(user.id, [newRole]).subscribe({
+      next: () => console.log(`Role updated for ${user.username} → ${newRole}`),
+      error: (err) => {
+        console.error('Error updating role', err);
+        this.loadUsers();
+      }
     });
   }
-}
 }

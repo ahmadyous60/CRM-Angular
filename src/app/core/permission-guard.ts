@@ -9,7 +9,7 @@ export class PermissionGuard implements CanActivate {
   constructor(private auth: AuthService, private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const requiredRoles: string[] = route.data['roles']; // 👈 roles array milega
+    const requiredRoles: string[] = route.data['roles'];
     const currentUser = this.auth.currentUser();
 
     // user login hi nahi hai
