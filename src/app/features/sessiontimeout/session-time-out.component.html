@@ -1,0 +1,9 @@
+ <h2 mat-dialog-title>Session expiring soon</h2>
+    <mat-dialog-content>
+      <p>Your session will expire in <strong>{{countdown}}</strong> seconds.</p>
+      <p>Do you want to continue your session?</p>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="logout()">Logout</button>
+      <button mat-raised-button (click)="continue()">Continue</button>
+    </mat-dialog-actions>
