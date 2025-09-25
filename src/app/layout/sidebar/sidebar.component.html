@@ -55,6 +55,13 @@
      class="nav-link px-3 py-2 d-flex align-items-center gap-2">
      <i class="bi bi-person-badge"></i> Users
   </a>
+  <a *ngIf="auth.hasRole('superadmin')"
+   routerLink="/role-permissions"
+   routerLinkActive="active"
+   class="nav-link">
+   <i class="bi bi-shield-lock"></i> Manage Permissions
+</a>
+
 
   <!-- Logout -->
   <a class="nav-link px-3 py-2 d-flex align-items-center gap-2"

@@ -42,7 +42,8 @@ const sidebarRoutes = [
   { path: '/tasks', label: 'Tasks', roles: [], permissions: [] }, 
   { path: '/notes', label: 'Notes', roles: [], permissions: [] },
   { path: '/events', label: 'Events', roles: [], permissions: [] },
-  { path: '/users', label: 'Users', roles: ['superadmin'], permissions: ['Users.View'] }
+  { path: '/users', label: 'Users', roles: ['superadmin'], permissions: ['Users.View'] },
+  {path: '/role-permissions', label: 'Manage Permissions', roles: ['superadmin'], permissions: ['RolePermissions.Manage'] }
 ];
 @Component({
   selector: 'app-sidebar',

@@ -18,29 +18,26 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   return next(cloned).pipe(
-    catchError(err => {
-      if (err.status === 401) {
-        return auth.refreshToken().pipe(
-          switchMap(success => {
-            if (success) {
-              const newUser = auth.currentUser();
-              const newToken = newUser?.token;
-
-              if (newToken) {
-                const retryReq = req.clone({
-                  setHeaders: {
-                    Authorization: `Bearer ${newToken}`
-                  }
-                });
-                return next(retryReq);
-              }
+  catchError(err => {
+    if (err.status === 401) {
+      return auth.refreshToken().pipe(
+        switchMap(success => {
+          if (success) {
+            const newUser = auth.currentUser();
+            const newToken = newUser?.token;
+            if (newToken) {
+              const retryReq = req.clone({
+                setHeaders: { Authorization: `Bearer ${newToken}` }
+              });
+              return next(retryReq);
             }
-            auth.logout();
-            return throwError(() => new Error('Session expired. Please login again.'));
-          })
-        );
-      }
-      return throwError(() => err);
-    })
-  );
+          }
+          auth.logout();
+          return throwError(() => new Error('Session expired. Please login again.'));
+        })
+      );
+    }
+    return throwError(() => err);
+  })
+);
 };

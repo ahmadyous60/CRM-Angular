@@ -1,0 +1,23 @@
+<div class="container">
+  <h3>Manage Role Permissions</h3>
+
+  <label>Select Role:</label>
+  <select [(ngModel)]="selectedRole">
+    <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+  </select>
+
+  <table class="table table-bordered mt-3">
+    <tr>
+      <th>Permission</th>
+      <th>Assigned</th>
+    </tr>
+    <tr *ngFor="let perm of permissions">
+      <td>{{ perm.name }}</td>
+      <td>
+        <input type="checkbox"
+               [disabled]="!selectedRole"
+               (change)="togglePermission(selectedRole, perm.id, $event)" />
+      </td>
+    </tr>
+  </table>
+</div>

@@ -1,3 +1,4 @@
+import { Permission } from './permission.model';
 export interface User {
   id: string;
   username: string;
@@ -5,6 +6,6 @@ export interface User {
   name: string;
   token: string;          // ✅ access token
   refreshToken: string;   // ✅ refresh token
-  permissions: string[];
+  permissions: Permission[];
   roles: string[];
 }

@@ -15,7 +15,7 @@ export class AuthService {
 
   private API_URL = `${environment.apiUrl}/Auth`;
 
-  private SESSION_WARNING_MARGIN_MS = 60 * 1000; 
+  private SESSION_WARNING_MARGIN_MS = 30 * 1000; 
   private dialogTimeoutMs = 30 * 1000; 
   private warningTimer: any = null;
   private expiryTimer: any = null;
@@ -64,8 +64,6 @@ login(username: string, password: string): Observable<User | null> {
     })
   );
 }
-
-
   // ✅ Signup
   signup(username: string, password: string, name: string, email: string): Observable<User | null> {
   return this.http.post<{ accessToken: string; refreshToken: string }>(
@@ -219,10 +217,10 @@ login(username: string, password: string): Observable<User | null> {
   }
 
   // ✅ Permission check
-  hasPermission(permission: string): boolean {
-    const user = this.currentUser();
-    return user?.permissions?.includes(permission) ?? false;
-  }
+  hasPermission(permissionId: string): boolean {
+  const user = this.currentUser();
+  return user?.permissions?.some(p => p.id === permissionId) ?? false;
+}
 
   // ✅ Role check
   hasRole(role: string): boolean {
@@ -330,4 +328,32 @@ deleteUser(userId: string): Observable<any> {
       }
     });
   }
+
+  getAllPermissions(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.API_URL}/permissions`);
+}
+
+assignPermissions(roleId: string, permissionIds: string[]): Observable<any> {
+  return this.http.post(`${this.API_URL}/roles/${roleId}/permissions`, permissionIds);
+}
+
+ revokePermission(roleId: string, permissionId: string): Observable<any> {
+  const url = `${this.API_URL}/roles/${roleId}/permissions/${permissionId}`;
+  console.log("Revoke Permission URL:", url);
+  console.log("Role ID:", roleId, "Permission ID:", permissionId);
+
+  return this.http.delete(url).pipe(
+    catchError(err => {
+      console.error("Error revoking permission:", err);
+      throw err; // rethrow so subscriber can handle
+    })
+  );
+}
+
+
+
+getUserPermissions(userId: string): Observable<any[]> {
+  return this.http.get<any[]>(`${this.API_URL}/users/${userId}/permissions`);
+}
+
 }

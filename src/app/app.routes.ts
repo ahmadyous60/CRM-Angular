@@ -18,6 +18,7 @@ import { EventsListComponent } from './features/Events/events-list/event-list.co
 import { EventFormComponent } from './features/Events/events-form/event-form.component';
 import { UsersListComponent } from './features/users/users-list.component';
 import { PermissionGuard } from './core/permission-guard';
+import { RolePermissionsComponent } from './features/rolepermissions/role-permission.component';
 
 export const routes: Routes = [
   {path: 'login' , loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)},
@@ -58,7 +59,8 @@ export const routes: Routes = [
       {path: 'events', component: EventsListComponent, title: 'Events' },
       {path: 'events/new', component: EventFormComponent, title: 'Create Event' },
 
-      {path: 'users', component: UsersListComponent, title: 'Users' , canActivate:[PermissionGuard], data: { roles: ['superadmin'] } }
+      {path: 'users', component: UsersListComponent, title: 'Users' , canActivate:[PermissionGuard], data: { roles: ['superadmin'] } },
+      {path: 'role-permissions', component: RolePermissionsComponent, title: 'Manage Permissions' , canActivate:[PermissionGuard], data: { roles: ['superadmin'] } }
       
 
 
