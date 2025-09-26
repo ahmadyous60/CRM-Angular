@@ -5,7 +5,6 @@ import { AuthService } from '../core/auth.service';
   selector: '[hasPermission]'
 })
 export class HasPermissionDirective {
-  private requiredPermission!: string;
 
   constructor(
     private templateRef: TemplateRef<any>,
@@ -14,12 +13,8 @@ export class HasPermissionDirective {
   ) {}
 
   @Input() set hasPermission(permission: string) {
-    this.requiredPermission = permission;
-
-    const hasPermission = this.authService.hasPermission(permission);
-
     this.viewContainer.clear();
-    if (hasPermission) {
+    if (this.authService.hasPermission(permission)) {
       this.viewContainer.createEmbeddedView(this.templateRef);
     }
   }

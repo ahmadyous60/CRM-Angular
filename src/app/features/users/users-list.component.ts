@@ -3,8 +3,6 @@ import { AuthService } from '../../core/auth.service';
 import { User } from '../../models/user.model';
 import { FormsModule } from '@angular/forms';
 import { NgIf, NgFor } from '@angular/common';
-import { Permission } from '../../models/permission.model';
-import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-users-list',
@@ -16,7 +14,7 @@ export class UsersListComponent implements OnInit {
   users: User[] = [];
   selectedUser: User | null = null;
 
-  constructor(public authService: AuthService, private http:HttpClient) {}
+  constructor(public authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -55,28 +53,4 @@ export class UsersListComponent implements OnInit {
       }
     });
   }
-
-togglePermission(roleId: string, perm: Permission, event: any) {
-  if (!roleId || !perm?.id) return;
-
-  if (event.target.checked) {
-    this.authService.assignPermissions(roleId, [perm.id]).subscribe({
-      next: () => console.log(`Permission ${perm.name} added to role ${roleId}`),
-      error: (err) => console.error(err)
-    });
-  } else {
-    this.authService.revokePermission(roleId, perm.id).subscribe({
-      next: () => console.log(`Permission ${perm.name} removed from role ${roleId}`),
-      error: (err) => console.error(err)
-    });
-  }
-}
-
-
-
-
-
-
-
-
 }

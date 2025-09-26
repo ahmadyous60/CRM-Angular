@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
+import { Permission } from '../models/permission.model';
 import { jwtDecode } from "jwt-decode";
 import { MatDialog } from '@angular/material/dialog';
 import { SessionTimeoutDialogComponent } from '../features/sessiontimeout/session-time-out.component';
@@ -40,7 +41,7 @@ login(username: string, password: string): Observable<User | null> {
         roles: Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
           ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
           : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]],
-        permissions: decoded["Permission"] || [],
+        permissions: this.normalizePermissions(decoded["Permission"] ?? decoded["Permissions"]) ,
         fullName: decoded["FullName"] || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
       };
 
@@ -81,7 +82,7 @@ login(username: string, password: string): Observable<User | null> {
         roles: Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
           ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
           : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]],
-        permissions: decoded["Permission"] || [],
+        permissions: this.normalizePermissions(decoded["Permission"] ?? decoded["Permissions"]) ,
         fullName: decoded["FullName"] || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
       };
 
@@ -168,11 +169,15 @@ login(username: string, password: string): Observable<User | null> {
   restoreUser(): void {
   const saved = localStorage.getItem('currentUser');
   if (saved) {
-    const user: User = JSON.parse(saved);
-    this.currentUser.set(user);
+    const raw: User = JSON.parse(saved);
+    const migrated: User = {
+      ...raw,
+      permissions: this.normalizePermissions((raw as any).permissions)
+    };
+    this.currentUser.set(migrated);
 
     // use setUser so timers are scheduled
-    this.setUser(user);
+    this.setUser(migrated);
   }
 }
 
@@ -217,10 +222,16 @@ login(username: string, password: string): Observable<User | null> {
   }
 
   // ✅ Permission check
-  hasPermission(permissionId: string): boolean {
+hasPermission(permissionName: string): boolean {
   const user = this.currentUser();
-  return user?.permissions?.some(p => p.id === permissionId) ?? false;
+  if (!user?.permissions) return false;
+  return user.permissions.some((p: any) => {
+    if (typeof p === 'string') return p === permissionName;
+    if (p && typeof p === 'object') return p.name === permissionName;
+    return false;
+  });
 }
+
 
   // ✅ Role check
   hasRole(role: string): boolean {
@@ -240,7 +251,7 @@ getAllUsers(): Observable<User[]> {
         email: u.email,
         name: u.name,
         roles: u.roles,
-        permissions: u.permissions || [],
+        permissions: this.normalizePermissions(u.permissions),
         token: '',
         refreshToken: ''
       }))
@@ -329,31 +340,90 @@ deleteUser(userId: string): Observable<any> {
     });
   }
 
+  
+  // ========================
+  //  Role & Permission APIs
+  // ========================
+
+  /** Get all permissions in the system */
   getAllPermissions(): Observable<any[]> {
-  return this.http.get<any[]>(`${this.API_URL}/permissions`);
-}
+    return this.http.get<any[]>(`${this.API_URL}/permissions`).pipe(
+      catchError(err => {
+        console.error('Failed to fetch permissions', err);
+        return of([]);
+      })
+    );
+  }
 
-assignPermissions(roleId: string, permissionIds: string[]): Observable<any> {
-  return this.http.post(`${this.API_URL}/roles/${roleId}/permissions`, permissionIds);
-}
+  /** Get permissions for a specific role */
+  getRolePermissions(roleId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/roles/${roleId}/permissions`).pipe(
+      catchError(err => {
+        console.error(`Failed to fetch permissions for role ${roleId}`, err);
+        return of([]);
+      })
+    );
+  }
 
- revokePermission(roleId: string, permissionId: string): Observable<any> {
-  const url = `${this.API_URL}/roles/${roleId}/permissions/${permissionId}`;
-  console.log("Revoke Permission URL:", url);
-  console.log("Role ID:", roleId, "Permission ID:", permissionId);
-
+assignPermissions(roleName: string, permissionIds: string[]): Observable<any> {
+    // match the endpoint in controller: /roles/{roleName}/permissionsByName
+    return this.http.post(`${this.API_URL}/roles/${roleName}/permissionsByName`, permissionIds).pipe(
+      catchError(err => {
+        console.error(`Failed to assign permissions to role ${roleName}`, err);
+        throw err;
+      })
+    );
+  }
+  /** Revoke a specific permission from a role */
+ revokePermission(roleName: string, permissionId: string): Observable<any> {
+  const url = `${this.API_URL}/roles/${roleName}/permissions/${permissionId}`;
+  console.log('Revoke Permission URL:', url);
   return this.http.delete(url).pipe(
     catchError(err => {
-      console.error("Error revoking permission:", err);
-      throw err; // rethrow so subscriber can handle
+      console.error(`Failed to revoke permission ${permissionId} from role ${roleName}`, err);
+      throw err;
     })
   );
 }
 
 
 
-getUserPermissions(userId: string): Observable<any[]> {
-  return this.http.get<any[]>(`${this.API_URL}/users/${userId}/permissions`);
-}
+  /** Get permissions assigned to a specific user */
+  getUserPermissions(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.API_URL}/users/${userId}/permissions`).pipe(
+      catchError(err => {
+        console.error(`Failed to fetch permissions for user ${userId}`, err);
+        return of([]);
+      })
+    );
+  }
 
+  // ========================
+  // Normalizers
+  // ========================
+  private normalizePermissions(input: any): Permission[] {
+    if (!input) return [];
+    // If server sends array of strings
+    if (Array.isArray(input) && input.every((p: any) => typeof p === 'string')) {
+      return (input as string[]).map(name => ({ id: name, name }));
+    }
+    // If server sends single string
+    if (typeof input === 'string') {
+      return [{ id: input, name: input }];
+    }
+    // If server sends array of objects
+    if (Array.isArray(input) && input.every((p: any) => typeof p === 'object')) {
+      return (input as any[]).map(p => ({ id: p.id ?? p.name ?? String(p), name: p.name ?? String(p) }));
+    }
+    // Fallback: try to coerce
+    try {
+      const arr = Array.isArray(input) ? input : [input];
+      return arr.map((p: any) => (
+        typeof p === 'string' ? { id: p, name: p } : { id: p?.id ?? p?.name ?? 'unknown', name: p?.name ?? String(p) }
+      ));
+    } catch {
+      return [];
+    }
+  }
+ 
 }
