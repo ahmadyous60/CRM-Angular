@@ -1,9 +1,23 @@
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="d-flex justify-content-between align-items-center mb-3">
   <h3 class="mb-0">Companies</h3>
-  <a  routerLink="/companies/new" class="btn btn-primary" *hasPermission="'Companies.Add'">
-    <i class="bi bi-plus-lg"></i> New Company
-  </a>
+  
+  <div class="d-flex gap-2">
+    <button *hasPermission="'Companies.Export'" 
+      type="button" 
+      class="btn btn-success"
+      (click)="exportCompanies()">
+      <i class="bi bi-file-earmark-excel me-2"></i> Export
+    </button>
+
+    <a 
+      routerLink="/companies/new" 
+      class="btn btn-primary" 
+      *hasPermission="'Companies.Add'">
+      <i class="bi bi-plus-lg me-1"></i> New Company
+    </a>
+  </div>
 </div>
+
 
 <div class="card p-3">
   <!-- Search & Page Size Controls -->

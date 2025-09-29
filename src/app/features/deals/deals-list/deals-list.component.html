@@ -1,9 +1,23 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3>Deals</h3>
-    <a routerLink="/deals/new" class="btn btn-primary" *hasPermission="'Deals.Add'">
+  <h3>Deals</h3>
+  
+  <div>
+    <!-- Export Button -->
+    <button *hasPermission="'Deals.Export'" 
+            class="btn btn-success me-2" 
+            (click)="exportDeals()">
+      <i class="bi bi-file-earmark-excel"></i> Export
+    </button>
+
+    <!-- New Deal Button -->
+    <button *hasPermission="'Deals.Add'" 
+            class="btn btn-primary" 
+            [routerLink]="'/deals/new'">
       <i class="bi bi-plus-lg"></i> New Deal
-    </a>
+    </button>
   </div>
+</div>
+
 
   <div class="card p-3">
     <!-- Search -->

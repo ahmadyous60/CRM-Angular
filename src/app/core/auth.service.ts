@@ -355,18 +355,7 @@ deleteUser(userId: string): Observable<any> {
     );
   }
 
-  /** Get permissions for a specific role */
-  getRolePermissions(roleId: string): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/roles/${roleId}/permissions`).pipe(
-      catchError(err => {
-        console.error(`Failed to fetch permissions for role ${roleId}`, err);
-        return of([]);
-      })
-    );
-  }
-
 assignPermissions(roleName: string, permissionIds: string[]): Observable<any> {
-    // match the endpoint in controller: /roles/{roleName}/permissionsByName
     return this.http.post(`${this.API_URL}/roles/${roleName}/permissionsByName`, permissionIds).pipe(
       catchError(err => {
         console.error(`Failed to assign permissions to role ${roleName}`, err);
@@ -374,7 +363,7 @@ assignPermissions(roleName: string, permissionIds: string[]): Observable<any> {
       })
     );
   }
-  /** Revoke a specific permission from a role */
+
  revokePermission(roleName: string, permissionId: string): Observable<any> {
   const url = `${this.API_URL}/roles/${roleName}/permissions/${permissionId}`;
   console.log('Revoke Permission URL:', url);
@@ -387,8 +376,12 @@ assignPermissions(roleName: string, permissionIds: string[]): Observable<any> {
 }
 
 
+getRolePermissionsByName(roleName: string): Observable<any[]> {
+  return this.http.get<any[]>(`${this.API_URL}/roles/${roleName}/permissionsByName`);
+}
 
-  /** Get permissions assigned to a specific user */
+
+  // /** Get permissions assigned to a specific user */
   getUserPermissions(userId: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_URL}/users/${userId}/permissions`).pipe(
       catchError(err => {
@@ -425,5 +418,13 @@ assignPermissions(roleName: string, permissionIds: string[]): Observable<any> {
       return [];
     }
   }
+  getAllRoles(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.API_URL}/roles`).pipe(
+    catchError(err => {
+      console.error('Failed to fetch roles', err);
+      return of([]);
+    })
+  );
+}
  
 }

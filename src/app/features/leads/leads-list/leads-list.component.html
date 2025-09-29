@@ -1,7 +1,7 @@
          <div class="d-flex justify-content-between align-items-center mb-3">
   <h3 class="mb-0">Leads</h3>
   <div>
-    <button *hasPermission="'Leads.Export'" class="btn btn-success me-2" (click)="exportToExcel()">
+    <button *hasPermission="'Leads.Export'" class="btn btn-success me-2" (click)="exportLeads()">
       <i class="bi bi-file-earmark-excel"></i> Export
     </button>
     <a routerLink="/leads/new" class="btn btn-primary" *hasPermission="'Leads.Add'">

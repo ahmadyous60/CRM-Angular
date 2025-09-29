@@ -50,6 +50,7 @@ const sidebarRoutes = [
   standalone: true,
   imports: [RouterLink, RouterLinkActive, NgIf],
   templateUrl: './sidebar.component.html',
+  styleUrls: ['./sidebar.component.scss']
 })
 export class SidebarComponent {
   userRoles: string[] = [];

@@ -1,71 +1,89 @@
-<div class="d-flex flex-column gap-2">
-  <a class="navbar-brand fw-bold d-flex align-items-center gap-2 mb-3">
-    <i class="bi bi-speedometer2"></i> Dashboard
+<nav class="sidebar-glass d-flex flex-column gap-3 p-3">
+  <!-- Brand -->
+  <a class="navbar-brand fw-bold d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-speedometer2 fs-5"></i> <span>Dashboard</span>
   </a>
 
-  <!-- Leads -->
-  <a *ngIf="userRoles.includes('admin') || userRoles.includes('superadmin')"
-     routerLink="/leads" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-person-lines-fill"></i> Leads
-  </a>
+  <ul class="nav flex-column gap-2">
+    <!-- Leads -->
+    <li *ngIf="userRoles.includes('admin') || userRoles.includes('superadmin')">
+      <a routerLink="/leads" routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-person-lines-fill"></i> <span>Leads</span>
+      </a>
+    </li>
 
-  <!-- Deals -->
-  <a *ngIf="userRoles.includes('admin') || userRoles.includes('superadmin')"
-     routerLink="/deals" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-cash-coin"></i> Deals
-  </a>
+    <!-- Deals -->
+    <li *ngIf="userRoles.includes('admin') || userRoles.includes('superadmin')">
+      <a routerLink="/deals" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-cash-coin"></i> <span>Deals</span>
+      </a>
+    </li>
 
-  <!-- Contacts -->
-  <a *ngIf="userRoles.includes('user') || userRoles.includes('admin') || userRoles.includes('superadmin')"
-     routerLink="/contacts" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-people"></i> Contacts
-  </a>
+    <!-- Contacts -->
+    <li *ngIf="userRoles.includes('user') || userRoles.includes('admin') || userRoles.includes('superadmin')">
+      <a routerLink="/contacts" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-people"></i> <span>Contacts</span>
+      </a>
+    </li>
 
-  <!-- Companies -->
-  <a *ngIf="userRoles.includes('user') || userRoles.includes('admin') || userRoles.includes('superadmin')"
-     routerLink="/companies" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-buildings"></i> Companies
-  </a>
+    <!-- Companies -->
+    <li *ngIf="userRoles.includes('user') || userRoles.includes('admin') || userRoles.includes('superadmin')">
+      <a routerLink="/companies" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-buildings"></i> <span>Companies</span>
+      </a>
+    </li>
 
-  <!-- Tasks (All) -->
-  <a routerLink="/tasks" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-list-task"></i> Tasks
-  </a>
+    <!-- Tasks -->
+    <li>
+      <a routerLink="/tasks" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-list-task"></i> <span>Tasks</span>
+      </a>
+    </li>
 
-  <!-- Notes (All) -->
-  <a routerLink="/notes" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-sticky"></i> Notes
-  </a>
+    <!-- Notes -->
+    <li>
+      <a routerLink="/notes" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-sticky"></i> <span>Notes</span>
+      </a>
+    </li>
 
-  <!-- Events (ALL) -->
-  <a routerLink="/events" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-calendar-event"></i> Events
-  </a>
+    <!-- Events -->
+    <li>
+      <a routerLink="/events" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-calendar-event"></i> <span>Events</span>
+      </a>
+    </li>
 
-  <!-- Users (Only superadmin) -->
-  <a *ngIf="userRoles.includes('superadmin')"
-     routerLink="/users" routerLinkActive="active"
-     class="nav-link px-3 py-2 d-flex align-items-center gap-2">
-     <i class="bi bi-person-badge"></i> Users
-  </a>
-  <a *ngIf="auth.hasRole('superadmin')"
-   routerLink="/role-permissions"
-   routerLinkActive="active"
-   class="nav-link">
-   <i class="bi bi-shield-lock"></i> Manage Permissions
-</a>
+    <!-- Users -->
+    <li *ngIf="userRoles.includes('superadmin')">
+      <a routerLink="/users" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-person-badge"></i> <span>Users</span>
+      </a>
+    </li>
 
+    <!-- Role Permissions -->
+    <li *ngIf="auth.hasRole('superadmin')">
+      <a routerLink="/role-permissions" routerLinkActive="active"
+         class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold">
+        <i class="bi bi-shield-lock"></i> <span>Manage Permissions</span>
+      </a>
+    </li>
 
-  <!-- Logout -->
-  <a class="nav-link px-3 py-2 d-flex align-items-center gap-2"
-     (click)="logout()" style="cursor:pointer;">
-     <i class="bi bi-box-arrow-right"></i> Logout
-  </a>
-</div>
+    <!-- Logout -->
+    <li>
+      <a class="nav-link d-flex align-items-center gap-2 py-1 px-2 fw-semibold"
+         (click)="logout()" style="cursor:pointer;">
+        <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+      </a>
+    </li>
+  </ul>
+</nav>

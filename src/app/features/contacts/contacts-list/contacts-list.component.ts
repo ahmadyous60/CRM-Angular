@@ -9,6 +9,7 @@ import { TasksListComponent } from "../../Tasks/tasks-list/task-list.component";
 import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
 import { EventsListComponent } from "../../Events/events-list/event-list.component";
 import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
+import { ExcelExportService } from '../../../core/excel-export.service';
 
 @Component({
   selector: 'app-contacts-list',
@@ -34,7 +35,7 @@ export class ContactsListComponent {
   // Contacts data
   contacts: () => Contact[];
 
-  constructor(public ds: DataService ) {
+  constructor(public ds: DataService , private excelExport: ExcelExportService) {
     this.contacts = this.ds.list<Contact>('contacts');
   }
 
@@ -124,5 +125,17 @@ export class ContactsListComponent {
       modal.show();
     }
   }
-   
+  exportContatcts(){
+    const data = this.contacts().map(contact => ({
+      'First Name': contact.firstName,
+      'Last Name': contact.lastName,
+      'Email': contact.email,
+      'Mobile': contact.mobile,
+      'Date of Birth': contact.dob ? new Date(contact.dob).toLocaleDateString() : '',
+      'Reporting To': contact.reportingTo,
+      'Mailing City': contact.mailingCity,
+      'Mailing Country': contact.mailingCountry,
+    }));
+    this.excelExport.exportToExcel(data, 'Contacts');
+  }
 }

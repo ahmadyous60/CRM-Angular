@@ -7,6 +7,7 @@ import { Company } from '../../../models/company.model';
 import { Modal } from 'bootstrap';
 import { AuthService } from '../../../core/auth.service';
 import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
+import { ExcelExportService } from '../../../core/excel-export.service';
 
 @Component({
   selector: 'app-companies-list',
@@ -28,7 +29,7 @@ export class CompaniesListComponent {
 
   companies: () => any[];
 
-  constructor(public ds: DataService, public auth: AuthService) {
+  constructor(public ds: DataService, public auth: AuthService , private excelExport: ExcelExportService) {
     this.companies = this.ds.list<any>('companies');
   }
 
@@ -120,5 +121,13 @@ update() {
       const modal = new Modal(modalEl);
       modal.show();
     }
+  }
+  exportCompanies(){
+    const data = this.companies().map(comapny=>({
+      'Name':comapny.name,
+      'Industry':comapny.industry,
+      'Website':comapny.website,
+    }))
+    this.excelExport.exportToExcel(data,'companies')
   }
 }

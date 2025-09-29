@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../core/auth.service';
 import { FormsModule } from '@angular/forms';
 import { NgFor, NgIf, TitleCasePipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-role-permissions',
@@ -11,21 +12,35 @@ import { NgFor, NgIf, TitleCasePipe } from '@angular/common';
 })
 export class RolePermissionsComponent implements OnInit {
   permissions: any[] = [];
-  roles = ['superadmin', 'admin', 'user'];
-  selectedRole = 'superadmin';
+  roles: string[] = [];
+  selectedRole = '';
   loading = false;
 
   constructor(private auth: AuthService) {}
 
   ngOnInit() {
-    this.loadPermissions();
+    this.auth.getAllRoles().subscribe({
+      next: roles => {
+        this.roles = roles.map((r: any) => r.name);
+        if (this.roles.length > 0) {
+          this.selectedRole = this.roles[0]; // default to first role
+          this.loadPermissions();
+        }
+      },
+      error: err => console.error('Error loading roles:', err)
+    });
   }
 
+  /** Load all permissions first */
   loadPermissions() {
     this.loading = true;
     this.auth.getAllPermissions().subscribe({
       next: perms => {
-        this.permissions = perms.map(p => ({ ...p, assigned: false }));
+        this.permissions = perms.map(p => ({
+          ...p,
+          assigned: false,
+          disabled: false
+        }));
         this.loadRolePermissions();
         this.loading = false;
       },
@@ -36,19 +51,38 @@ export class RolePermissionsComponent implements OnInit {
     });
   }
 
-  loadRolePermissions() {
-    if (!this.selectedRole) return;
+loadRolePermissions(role?: string) {
+  const roleName = role || this.selectedRole;
+  if (!roleName) return;
 
-    this.auth.getRolePermissions(this.selectedRole).subscribe({
-      next: rolePerms => {
-        this.permissions.forEach(perm => {
-          perm.assigned = rolePerms.some(rp => rp.id === perm.id);
-        });
-      },
-      error: err => console.error('Error loading role permissions:', err)
-    });
-  }
+  this.loading = true;
 
+  forkJoin({
+    allPerms: this.auth.getAllPermissions(),
+    role: this.auth.getRolePermissionsByName(roleName)
+  }).subscribe({
+    next: ({ allPerms, role }) => {
+      this.permissions = allPerms.map(p => {
+        const isRoleAssigned = role.some((r: any) => r.id === p.id);
+
+        return {
+          ...p,
+          assigned: isRoleAssigned,
+          disabled: false ,
+        };
+      });
+
+      this.loading = false;
+    },
+    error: err => {
+      console.error('Error loading role permissions:', err);
+      this.loading = false;
+    }
+  });
+}
+
+
+  /** Assign or revoke permission */
   togglePermission(role: string, permissionId: string, event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
 
@@ -65,10 +99,9 @@ export class RolePermissionsComponent implements OnInit {
     }
   }
 
-  setPermissionAssigned(permissionId: string, assigned: boolean) {
+  /** Update UI state for a permission */
+  private setPermissionAssigned(permissionId: string, assigned: boolean) {
     const perm = this.permissions.find(p => p.id === permissionId);
     if (perm) perm.assigned = assigned;
   }
 }
-
-

@@ -7,6 +7,8 @@ import { Deal } from '../../../models/deal.model';
 import { Modal } from 'bootstrap';
 import { AuthService } from '../../../core/auth.service';
 import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
+import { ExcelExportService } from '../../../core/excel-export.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   standalone: true,
@@ -30,7 +32,7 @@ export class DealsListComponent {
   paginated: () => any[];
   totalPages: () => number;
 
-  constructor(private ds: DataService, public auth: AuthService) {
+  constructor(private ds: DataService, public auth: AuthService, private excelExport: ExcelExportService) {
     this.deals = this.ds.list<any>('deals');
 
     this.filtered = computed(() => {
@@ -115,6 +117,15 @@ view(deal: Deal): void {
     const modal = new Modal(modalEl);
     modal.show();
   }
+}
+exportDeals(){
+  const dataToExport = this.filtered().map(deal => ({
+    Title: deal.title,
+    Amount: deal.amount,
+    Stage: deal.stage
+  }));
+  this.excelExport.exportToExcel(dataToExport, 'deals');
+
 }
   
 }

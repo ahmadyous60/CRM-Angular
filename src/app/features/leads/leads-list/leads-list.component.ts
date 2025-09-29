@@ -7,14 +7,13 @@ import type { Note } from '../../../models/note.model';
 import type { Event } from '../../../models/event.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
 import { Modal } from 'bootstrap';
 import { productOptions } from '../../../models/product-options.const';
 import { TasksListComponent } from '../../Tasks/tasks-list/task-list.component';
 import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
 import { EventsListComponent } from "../../Events/events-list/event-list.component";
 import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
+import { ExcelExportService } from '../../../core/excel-export.service';
 
 @Component({
   selector: 'app-leads-list',
@@ -52,7 +51,7 @@ export class LeadsListComponent {
 
   leads: () => Lead[];
 
-  constructor(public ds: DataService ) {
+  constructor(public ds: DataService , private excelExport: ExcelExportService) {
     this.leads = this.ds.list<Lead>('leads');
   
   }
@@ -173,24 +172,16 @@ updateAvailableProducts(category: string) {
   // -------------------
   // Excel Export
   // -------------------
-  exportToExcel() {
+  exportLeads() {
     const data = this.filtered().map(lead => ({
       Name: lead.name,
       Email: lead.email,
       Phone: lead.phone,
       Status: lead.status,
       Source: lead.source,
-      Product: lead.product,
-      CreatedAt: new Date(lead.createdAt).toLocaleString()
+      Product: lead.product
     }));
-
-    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
-    const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Leads");
-
-    const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-    const filename = `leads_${new Date().toISOString().slice(0, 10)}.xlsx`;
-    saveAs(new Blob([wbout], { type: 'application/octet-stream' }), filename);
+    this.excelExport.exportToExcel(data, 'Leads');
   }
 
   // -------------------
