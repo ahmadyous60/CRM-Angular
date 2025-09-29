@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
+import { NavigationService } from '../../../core/navigation.service'; 
 
 @Component({
   selector: 'app-forgot-password',
@@ -12,8 +14,14 @@ import { AuthService } from '../../../core/auth.service';
 })
 export class ForgotPasswordComponent {
   forgotForm: FormGroup;
+  loading = false;
 
-  constructor(private fb: FormBuilder, private auth: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    private navService: NavigationService,
+  ) {
     this.forgotForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]]
     });
@@ -21,10 +29,24 @@ export class ForgotPasswordComponent {
 
   onSubmit() {
     if (this.forgotForm.valid) {
+      this.loading = true;
       const { email } = this.forgotForm.value;
+
       this.auth.forgotPassword(email).subscribe({
-        next: () => alert('Password reset link has been sent to your email.'),
-        error: () => alert('Something went wrong.')
+        next: () => {
+          this.loading = false;
+          this.forgotForm.reset();
+
+          // ✅ mark navigation as internal
+          this.navService.isNavigated = true;
+
+          // redirect to confirmation page
+          this.router.navigate(['/reset-link-sent']);
+        },
+        error: () => {
+          this.loading = false;
+          alert('❌ Something went wrong. Please try again.');
+        }
       });
     }
   }

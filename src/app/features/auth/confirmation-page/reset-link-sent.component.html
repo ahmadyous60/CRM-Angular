@@ -1,0 +1,20 @@
+<section class="vh-100 d-flex justify-content-center align-items-center bg-light">
+  <div class="card p-5 border-0 shadow-lg text-center glass-card animate__animated animate__fadeIn">
+    <div class="mb-4">
+      <i class="bi bi-envelope-check-fill text-primary fs-1"></i>
+    </div>
+    <h3 class="mb-3 text-primary fw-bold">Check Your Email</h3>
+    <p class="text-secondary fs-6">
+      If an account with that email exists, we've sent a password reset link.<br />
+      Please check your inbox and follow the instructions.
+    </p>
+    <div class="mt-4">
+      <div class="spinner-border text-primary me-2" role="status" style="width: 1rem; height: 1rem;">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <span class="text-muted">
+        Redirecting to login in <strong>{{ countdown }}</strong> seconds...
+      </span>
+    </div>
+  </div>
+</section>

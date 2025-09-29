@@ -29,11 +29,15 @@ export const routes: Routes = [
     .then(m => m.ForgotPasswordComponent), 
   canActivate: [NoDirectAccessGuard] 
 },
+{path: 'reset-link-sent', loadComponent: () => import('./features/auth/confirmation-page/reset-link-sent.component')
+    .then(m => m.ResetLinkSentComponent), 
+    canActivate: [NoDirectAccessGuard]
+},
 { 
   path: 'reset-password', 
   loadComponent: () => import('./features/auth/resetpassword/resetpassword.component')
-    .then(m => m.ResetPasswordComponent), 
-  canActivate: [NoDirectAccessGuard] 
+    .then(m => m.ResetPasswordComponent),
+  canActivate: [NoDirectAccessGuard]
 },
   {
     path: '',
