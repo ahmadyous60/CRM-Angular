@@ -5,10 +5,15 @@
         <div class="card border-0 shadow-lg rounded-4 animate-card">
           <div class="card-body p-5">
 
+            <!-- Error Messages -->
+            <div *ngIf="errors.length > 0" class="alert alert-danger rounded-3 shadow-sm p-3 mb-3">
+              <ul class="mb-0">
+                <li *ngFor="let err of errors">{{ err }}</li>
+              </ul>
+            </div>
+
             <h2 class="text-center mb-4 fw-bold text-gradient animate-title">Create Your Account</h2>
-
             <form (ngSubmit)="onSignup()" #signupForm="ngForm" novalidate>
-
               <!-- Name -->
               <div class="form-floating mb-3 animate-input">
                 <input 
@@ -55,7 +60,7 @@
               <div class="text-danger mt-1" *ngIf="signupForm.submitted && !email">Email is required</div>
 
               <!-- Password -->
-             <div class="form-floating mb-3 animate-input position-relative">
+              <div class="form-floating mb-3 animate-input position-relative">
                 <input 
                   [type]="showPassword ? 'text' : 'password'" 
                   class="form-control" 
@@ -73,7 +78,6 @@
                   <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
                 </button>
               </div>
-
               <div class="text-danger mt-1" *ngIf="signupForm.submitted && !password">Password is required</div>
 
               <!-- Sign Up Button -->
@@ -92,7 +96,6 @@
                 style="background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; border: none;">
                 Already have an account? Login
               </a>
-
             </form>
 
           </div>

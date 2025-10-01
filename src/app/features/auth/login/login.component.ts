@@ -15,6 +15,7 @@ import { NavigationService } from '../../../core/navigation.service';
 export class LoginComponent {
   loginForm: FormGroup;
   showPassword: boolean = false;
+  errorMessage: string | null = null; // ✅ for showing login errors
 
   constructor(
     private fb: FormBuilder,
@@ -32,11 +33,18 @@ export class LoginComponent {
   onLogin(): void {
     if (this.loginForm.valid) {
       const { username, password } = this.loginForm.value;
-      this.auth.login(username, password).subscribe(success => {
-        if (success) {
-          this.router.navigate(['/leads']);
-        } else {
-          alert('Invalid username or password');
+
+      this.auth.login(username, password).subscribe({
+        next: success => {
+          if (success) {
+            this.errorMessage = null; // clear any old errors
+            this.router.navigate(['/leads']);
+          } else {
+            this.errorMessage = 'Invalid username or password';
+          }
+        },
+        error: () => {
+          this.errorMessage = 'Something went wrong. Please try again later.';
         }
       });
     }
@@ -46,6 +54,7 @@ export class LoginComponent {
     this.navService.isNavigated = true;
     this.router.navigate(['/forgot-password']);
   }
+
   togglePassword(): void {
     this.showPassword = !this.showPassword;
   }

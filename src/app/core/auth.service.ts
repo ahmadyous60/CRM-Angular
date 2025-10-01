@@ -65,15 +65,52 @@ login(username: string, password: string): Observable<User | null> {
     })
   );
 }
-  // ✅ Signup
-  signup(username: string, password: string, name: string, email: string): Observable<User | null> {
-  return this.http.post<{ accessToken: string; refreshToken: string }>(
+// ✅ Signup
+signup(username: string, password: string, name: string, email: string): Observable<string | null> {
+  return this.http.post<{ message: string }>(
     `${this.API_URL}/signup`,
     { username, name, email, password }
   ).pipe(
     map(res => {
-      // Decode JWT to extract roles and permissions
-      const decoded = jwtDecode<any>(res.accessToken);
+      this.snackBar.open(res.message, 'Close', { duration: 4000 });
+      return res.message;
+    }),
+    catchError(err => {
+      let messages: string[] = [];
+
+      if (err.status === 400 && err.error) {
+        if (Array.isArray(err.error?.errors)) {
+          messages = err.error.errors;
+        } else if (err.error?.error) {
+          messages = [err.error.error];
+        } else if (typeof err.error === 'string') {
+          messages = [err.error];
+        }
+      }
+
+      if (messages.length > 0) {
+        messages.forEach(msg => this.snackBar.open(msg, 'Close', { duration: 4000 }));
+      } else {
+        this.snackBar.open('Signup failed. Please try again.', 'Close', { duration: 4000 });
+      }
+
+      return of(null);
+    })
+  );
+}
+
+
+confirmEmail(userId: string, token: string) {
+  return this.http.post<{ message: string }>(`${this.API_URL}/confirm-email`, { userId, token });
+}
+
+changePassword(userId: string, oldPassword: string, newPassword: string): Observable<User | null> {
+  return this.http.post<{ accessToken: string; refreshToken: string }>(
+    `${this.API_URL}/change-password`,
+    { userId, oldPassword, newPassword }
+  ).pipe(
+    map(res => {
+      const decoded: any = jwtDecode(res.accessToken);
 
       const claims = {
         id: decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
@@ -82,8 +119,9 @@ login(username: string, password: string): Observable<User | null> {
         roles: Array.isArray(decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"])
           ? decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]
           : [decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]],
-        permissions: this.normalizePermissions(decoded["Permission"] ?? decoded["Permissions"]) ,
-        fullName: decoded["FullName"] || decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
+        permissions: this.normalizePermissions(decoded["Permission"] ?? decoded["Permissions"]),
+        fullName: decoded["FullName"] ||
+                  decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
       };
 
       const user: User = {
@@ -101,7 +139,7 @@ login(username: string, password: string): Observable<User | null> {
       return user;
     }),
     catchError(err => {
-      this.handleAuthError(err);
+      this.snackBar.open('Password change failed. Please try again.', 'Close', { duration: 4000 });
       return of(null);
     })
   );

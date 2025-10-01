@@ -22,6 +22,7 @@ import { RolePermissionsComponent } from './features/rolepermissions/role-permis
 
 export const routes: Routes = [
   {path: 'login' , loadComponent: () => import('./features/auth/login/login.component').then(m => m.LoginComponent)},
+  {path: 'password-renewal' , loadComponent: () => import('./features/auth/passwordrenewal/password-renewal.component').then(m => m.PasswordRenewalComponent)},
   {path: 'signup' , loadComponent: () => import('./features/auth/signup/signup.component').then(m => m.SignupComponent)}, 
 { 
   path: 'forgot-password', 

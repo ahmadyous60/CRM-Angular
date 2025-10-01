@@ -34,7 +34,7 @@
                   formControlName="password"
                 />
                 <label for="password">Password</label>
-                <!-- Only password toggle icon -->
+                <!-- Password toggle icon -->
                 <button 
                   type="button" 
                   class="btn position-absolute top-50 end-0 translate-middle-y me-3 p-0 border-0 bg-transparent"
@@ -46,8 +46,13 @@
                 Password is required
               </div>
 
+              <!-- Global Error -->
+              <div *ngIf="errorMessage" class="alert alert-danger text-center mt-3 animate-error">
+                {{ errorMessage }}
+              </div>
+
               <!-- Forgot Password -->
-              <div class="d-flex justify-content-end mb-3">
+              <div class="d-flex justify-content-end mb-3 mt-2">
                 <button 
                   type="button" 
                   class="btn btn-link text-decoration-none p-0 fw-semibold animate-link" 
