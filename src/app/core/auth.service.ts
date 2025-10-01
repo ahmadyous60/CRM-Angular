@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {filter,take, map, catchError, switchMap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../environments/environment';
 import { User } from '../models/user.model';
@@ -104,7 +104,7 @@ confirmEmail(userId: string, token: string) {
   return this.http.post<{ message: string }>(`${this.API_URL}/confirm-email`, { userId, token });
 }
 
-changePassword(userId: string, oldPassword: string, newPassword: string): Observable<User | null> {
+changePassword(userId: string, oldPassword: string, newPassword: string): Observable<User> {
   return this.http.post<{ accessToken: string; refreshToken: string }>(
     `${this.API_URL}/change-password`,
     { userId, oldPassword, newPassword }
@@ -139,8 +139,7 @@ changePassword(userId: string, oldPassword: string, newPassword: string): Observ
       return user;
     }),
     catchError(err => {
-      this.snackBar.open('Password change failed. Please try again.', 'Close', { duration: 4000 });
-      return of(null);
+      return throwError(() => err);
     })
   );
 }
