@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../core/auth.service';
-import { FormsModule } from '@angular/forms';
-import { NgFor, NgIf, TitleCasePipe } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 import { forkJoin } from 'rxjs';
+import { SharedModule } from '../../core/sahred.module';
 
 @Component({
   selector: 'app-role-permissions',
   templateUrl: './role-permissions.component.html',
-  imports: [FormsModule, NgFor, NgIf, TitleCasePipe],
+  imports: [SharedModule],
   standalone: true
 })
 export class RolePermissionsComponent implements OnInit {

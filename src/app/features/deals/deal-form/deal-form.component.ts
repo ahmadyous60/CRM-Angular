@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
-import { DataService } from '../../../core/data.service';
+import { DataService } from '../../../services/data.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   standalone:true,
   selector:'app-deal-form',
-  imports:[ReactiveFormsModule],
+  imports:[SharedModule],
   templateUrl:'deal-form.component.html',
  
 })

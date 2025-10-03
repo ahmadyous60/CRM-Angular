@@ -1,15 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
-import { DataService } from '../../../core/data.service';
+import { DataService } from '../../../services/data.service';
 import { Event } from '../../../models/event.model';
 import { signal, computed } from '@angular/core';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   selector: 'app-events-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, CommonModule],
+  imports: [SharedModule],
   templateUrl: `./event-list.component.html`
 })
 export class EventsListComponent implements OnInit, OnChanges {

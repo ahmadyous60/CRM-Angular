@@ -1,18 +1,15 @@
 import { Component, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DataService } from '../../../core/data.service';
-import { NgFor, DatePipe, NgIf } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { DataService } from '../../../services/data.service';
 import { Company } from '../../../models/company.model';
 import { Modal } from 'bootstrap';
-import { AuthService } from '../../../core/auth.service';
-import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
-import { ExcelExportService } from '../../../core/excel-export.service';
+import { AuthService } from '../../../services/auth.service';
+import { ExcelExportService } from '../../../services/excel-export.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   selector: 'app-companies-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, HasPermissionDirective],
+  imports: [SharedModule],
   templateUrl: './companies-list.component.html'
 })
 export class CompaniesListComponent {

@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { FormBuilder, Validators,FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
-import { DataService } from '../../../core/data.service';
-import { NgIf } from '@angular/common';
+import { DataService } from '../../../services/data.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   selector: 'app-event-form',
   standalone: true,
-  imports: [ReactiveFormsModule, NgIf],
+  imports: [SharedModule],
   templateUrl: './event-form.component.html',
 })
 export class EventFormComponent {

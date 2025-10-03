@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
-import { DataService } from '../../../core/data.service';
-import { NgIf } from '@angular/common';
+import { DataService } from '../../../services/data.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 
 @Component({
   selector: 'app-contact-form',
   standalone: true,
-  imports: [ReactiveFormsModule , NgIf],
+  imports: [SharedModule],
   templateUrl: './contact-form.component.html'
 })
 export class ContactFormComponent {

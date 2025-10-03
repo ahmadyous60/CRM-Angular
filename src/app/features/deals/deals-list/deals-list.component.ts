@@ -1,19 +1,15 @@
 import { Component, computed, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DataService } from '../../../core/data.service';
-import { FormsModule } from '@angular/forms';
-import { NgFor, DatePipe, NgIf, CommonModule } from '@angular/common';
+import { DataService } from '../../../services/data.service';
 import { Deal } from '../../../models/deal.model';
 import { Modal } from 'bootstrap';
-import { AuthService } from '../../../core/auth.service';
-import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
-import { ExcelExportService } from '../../../core/excel-export.service';
-import { Title } from '@angular/platform-browser';
+import { AuthService } from '../../../services/auth.service';
+import { ExcelExportService } from '../../../services/excel-export.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   standalone: true,
   selector: 'app-deals-list',
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf , CommonModule, HasPermissionDirective],
+  imports: [SharedModule],
   templateUrl: './deals-list.component.html',
 })
 export class DealsListComponent {

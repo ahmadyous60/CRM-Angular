@@ -1,14 +1,12 @@
 import { Component, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { interval, Subscription } from 'rxjs';
-import { CommonModule } from '@angular/common';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { SharedModule } from '../../core/sahred.module';
 
 @Component({
   selector: 'app-session-timeout-dialog',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule],
+  imports: [SharedModule],
   templateUrl: './session-time-out.component.html'
 })
 export class SessionTimeoutDialogComponent implements OnDestroy {

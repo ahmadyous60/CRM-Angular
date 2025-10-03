@@ -1,16 +1,14 @@
 import { Component, Input, OnChanges, SimpleChanges, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
-import { DataService } from '../../../core/data.service';
+import { DataService } from '../../../services/data.service';
 import { Note } from '../../../models/note.model';
 import { TruncatePipe } from './truncate.pipe';
 import { signal, computed } from '@angular/core';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   selector: 'app-notes-list',
   standalone: true,
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, CommonModule, TruncatePipe],
+  imports: [SharedModule,TruncatePipe],
   templateUrl: './note-list.component.html',
 })
 

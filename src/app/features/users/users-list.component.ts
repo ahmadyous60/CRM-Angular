@@ -1,14 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../core/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { User } from '../../models/user.model';
-import { FormsModule } from '@angular/forms';
-import { NgIf, NgFor } from '@angular/common';
+import { SharedModule } from '../../core/sahred.module';
 
 @Component({
   selector: 'app-users-list',
   templateUrl: './users-list.component.html',
   standalone: true,
-  imports: [FormsModule, NgIf, NgFor]
+  imports: [SharedModule]
 })
 export class UsersListComponent implements OnInit {
   users: User[] = [];

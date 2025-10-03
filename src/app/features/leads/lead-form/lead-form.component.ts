@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
 import {Lead} from '../../../models/lead.model';
 import { productOptions } from '../../../models/product-options.const';
-import { DataService } from '../../../core/data.service';
+import { DataService } from '../../../services/data.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 const EMAIL_RX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
 const PHONE_RX = /^\+?[1-9]\d{7,14}$/;
@@ -12,7 +12,7 @@ const PHONE_RX = /^\+?[1-9]\d{7,14}$/;
 @Component({
   selector: 'app-lead-form',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [SharedModule],
   templateUrl: './lead-form.component.html'
 })
 export class LeadFormComponent {

@@ -1,25 +1,22 @@
 import { Component, computed, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DataService } from '../../../core/data.service';
+import { DataService } from '../../../services/data.service';
 import type { Lead} from '../../../models/lead.model';
 import type { Task } from '../../../models/task.model';
 import type { Note } from '../../../models/note.model';
 import type { Event } from '../../../models/event.model';
-import { FormsModule } from '@angular/forms';
-import { CommonModule, DatePipe, NgFor, NgIf } from '@angular/common';
 import { Modal } from 'bootstrap';
 import { productOptions } from '../../../models/product-options.const';
 import { TasksListComponent } from '../../Tasks/tasks-list/task-list.component';
 import { NotesListComponent } from "../../Notes/notes-list/note-list.component";
 import { EventsListComponent } from "../../Events/events-list/event-list.component";
-import { HasPermissionDirective } from '../../../Directive/hasPermission.directive';
-import { ExcelExportService } from '../../../core/excel-export.service';
+import { ExcelExportService } from '../../../services/excel-export.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   selector: 'app-leads-list',
   standalone: true,
   styleUrls: ['./lead-list.scss'],
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, CommonModule, TasksListComponent, NotesListComponent, EventsListComponent, HasPermissionDirective],
+  imports: [SharedModule, TasksListComponent, NotesListComponent, EventsListComponent],
   templateUrl: './leads-list.component.html',
 })
 export class LeadsListComponent {

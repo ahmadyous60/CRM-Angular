@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router} from '@angular/router';
-import { AuthService } from '../../core/auth.service';
+import { AuthService } from '../../services/auth.service';
+import { SharedModule } from '../../core/sahred.module';
 
 @Component({
   selector: 'app-topbar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [SharedModule],
   templateUrl: './topbar.component.html',
 })
 export class TopbarComponent {

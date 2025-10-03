@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/auth.service';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { NavigationService } from '../../../core/navigation.service';
+import { AuthService } from '../../../services/auth.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NavigationService } from '../../../services/navigation.service';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [SharedModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

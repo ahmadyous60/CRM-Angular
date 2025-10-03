@@ -29,9 +29,9 @@
 //   }
 // }
 import { Component, effect } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../core/auth.service';
-import { NgIf } from '@angular/common';
+import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
+import { SharedModule } from '../../core/sahred.module';
 
 // Sidebar ke routes define kar lo ek constant me
 const sidebarRoutes = [
@@ -48,7 +48,7 @@ const sidebarRoutes = [
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, NgIf],
+  imports: [SharedModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })

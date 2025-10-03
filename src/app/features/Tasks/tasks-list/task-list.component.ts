@@ -1,19 +1,17 @@
 import { Component, computed, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DataService} from '../../../core/data.service';
-import { FormsModule } from '@angular/forms';
-import { NgFor, DatePipe, NgIf, CommonModule } from '@angular/common';
+import { DataService} from '../../../services/data.service';
 import { Task } from '../../../models/task.model';
 import { Modal } from 'bootstrap';
 import { Input } from '@angular/core';
 import { OnChanges, SimpleChanges } from '@angular/core'; 
 import { ChangeDetectorRef } from '@angular/core';
+import { SharedModule } from '../../../core/sahred.module';
 
 @Component({
   standalone: true,
   selector: 'app-tasks-list',
   styleUrls: ['./task-list.scss'],
-  imports: [RouterLink, FormsModule, NgFor, DatePipe, NgIf, CommonModule ],
+  imports: [SharedModule ],
   templateUrl: `task-list.component.html`
 })
 export class TasksListComponent implements OnChanges {
