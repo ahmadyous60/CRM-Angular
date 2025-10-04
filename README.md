@@ -13,6 +13,7 @@ A modern Angular-based Customer Relationship Management (CRM) application with c
 - **Notes Management**: Add and manage notes with rich text support
 - **Events Management**: Schedule and manage events and meetings
 - **Users Management**: User administration with role and permission management
+- **Role & Permissions Management**: Assign and manage user roles and permissions dynamically
 
 ### Security & Authentication
 - **JWT Token Authentication**: Secure login with access and refresh tokens
@@ -20,15 +21,19 @@ A modern Angular-based Customer Relationship Management (CRM) application with c
 - **Permission-Based Authorization**: Granular permissions for different modules
 - **Password Reset**: Forgot password and reset password functionality
 - **Session Management**: Automatic token refresh and session restoration
+- **Session Timeout Warning**: Automatic session timeout warnings with extension options
 - **Route Guards**: Protected routes with authentication and authorization guards
+- **Token Interceptor**: Automatic token attachment and refresh on API calls
+- **Permission Directive**: UI-level permission-based element visibility
 
 ### User Interface
 - **Modern Dark Theme**: Beautiful dark theme with Bootstrap 5 and Material Design
-- **Responsive Design**: Works seamlessly on desktop, tablet, and Laptop devices
+- **Responsive Design**: Works seamlessly on desktop, tablet, and laptop devices
 - **Real-time Updates**: Live data updates with Angular Signals
 - **Advanced Filtering**: Search and filter capabilities across all modules
-- **Export Functionality**: Export data to Excel format from leads
+- **Excel Export**: Export data to Excel format from all modules
 - **Interactive UI**: Smooth animations and user-friendly interface
+- **Session Timeout Dialog**: User-friendly session management with warning dialogs
 
 ## 🛠️ Technology Stack
 
@@ -39,6 +44,11 @@ A modern Angular-based Customer Relationship Management (CRM) application with c
 - **Angular Material**: Material Design components
 - **RxJS**: Reactive programming with observables
 - **SCSS**: Advanced styling with custom dark theme
+- **Angular Signals**: Reactive state management
+- **JWT Decode**: JWT token parsing and validation
+- **XLSX**: Excel file generation and export
+- **File Saver**: Client-side file download functionality
+- **UUID**: Unique identifier generation
 
 ### Backend
 - **.NET Web API**: RESTful API backend
@@ -49,7 +59,9 @@ A modern Angular-based Customer Relationship Management (CRM) application with c
 ### Development Tools
 - **Angular CLI**: Development and build tools
 - **Jasmine & Karma**: Unit testing framework
-- **ESLint**: Code linting and formatting
+- **TypeScript**: Type-safe development with strict configuration
+- **JSON Server**: Mock API server for development
+- **Bootstrap Icons**: Icon library for UI components
 
 ## 📋 Prerequisites
 
@@ -112,7 +124,9 @@ The .NET API will be available at `https://localhost:7298`
 3. Frontend stores tokens and includes access token in API requests
 4. Token interceptor automatically adds `Authorization: Bearer <token>` header
 5. Automatic token refresh when access token expires
-6. Secure logout with token revocation
+6. Session timeout warnings with user extension options
+7. Secure logout with token revocation
+8. Automatic session restoration on page refresh
 
 ## 📡 API Endpoints
 
@@ -123,6 +137,15 @@ The .NET API will be available at `https://localhost:7298`
 - `POST /api/Auth/refresh` - Refresh access token
 - `POST /api/Auth/forgot-password` - Request password reset
 - `POST /api/Auth/reset-password` - Reset password with token
+- `POST /api/Auth/change-password` - Change user password
+- `GET /api/Auth/users` - Get all users (Admin only)
+- `PUT /api/Auth/users/{id}/roles` - Update user roles (Admin only)
+- `DELETE /api/Auth/users/{id}` - Delete user (Admin only)
+- `GET /api/Auth/permissions` - Get all permissions
+- `GET /api/Auth/roles` - Get all roles
+- `GET /api/Auth/roles/{roleName}/permissionsByName` - Get role permissions
+- `POST /api/Auth/roles/{roleName}/permissionsByName` - Assign permissions to role
+- `DELETE /api/Auth/roles/{roleName}/permissions/{permissionId}` - Revoke permission from role
 
 ### CRM Modules
 - `GET /api/Leads` - Get all leads
@@ -160,9 +183,24 @@ The .NET API will be available at `https://localhost:7298`
 - `PUT /api/Events/{id}` - Update event
 - `DELETE /api/Events/{id}` - Delete event
 
-- `GET /api/Users` - Get all users (Admin only)
-- `PUT /api/Users/{id}/roles` - Update user roles (Admin only)
-- `DELETE /api/Users/{id}` - Delete user (Admin only)
+### Activity Management
+- `GET /api/Activity/tasks` - Get all tasks
+- `POST /api/Activity/task` - Create new task
+- `PUT /api/Activity/task/{id}` - Update task
+- `DELETE /api/Activity/task/{id}` - Delete task
+- `GET /api/Activity/{entityType}/{entityId}/tasks` - Get tasks for specific entity
+
+- `GET /api/Activity/notes` - Get all notes
+- `POST /api/Activity/notes` - Create new note
+- `PUT /api/Activity/notes/{id}` - Update note
+- `DELETE /api/Activity/notes/{id}` - Delete note
+- `GET /api/Activity/{entityType}/{entityId}/notes` - Get notes for specific entity
+
+- `GET /api/Activity/events` - Get all events
+- `POST /api/Activity/event` - Create new event
+- `PUT /api/Activity/event/{id}` - Update event
+- `DELETE /api/Activity/event/{id}` - Delete event
+- `GET /api/Activity/{entityType}/{entityId}/events` - Get events for specific entity
 
 ## 📊 Data Models
 
@@ -175,8 +213,13 @@ interface User {
   name: string;
   token: string;          // JWT access token
   refreshToken: string;   // JWT refresh token
-  permissions: string[];  // User permissions
+  permissions: Permission[];  // User permissions array
   roles: string[];        // User roles
+}
+
+interface Permission {
+  id: string;
+  name: string;
 }
 ```
 
@@ -274,10 +317,11 @@ src/
 │   │   ├── auth.service.ts           # Authentication service with JWT
 │   │   ├── auth.guard.ts             # Route guard for authentication
 │   │   ├── permission-guard.ts       # Permission-based route guard
-│   │   ├── role-guard.ts             # Role-based route guard
+│   │   ├── NoDirectAccessGuard.ts    # Prevent direct access to auth pages
 │   │   ├── token.interceptor.ts      # JWT token interceptor
 │   │   ├── data.service.ts           # HTTP service for API calls
-│   │   └── navigation.service.ts     # Navigation service
+│   │   ├── navigation.service.ts     # Navigation service
+│   │   └── sahred.module.ts          # Shared module
 │   ├── Directive/                    # Custom directives
 │   │   └── hasPermission.directive.ts # Permission-based UI directive
 │   ├── features/                     # Feature modules
@@ -285,7 +329,9 @@ src/
 │   │   │   ├── login/                # Login component
 │   │   │   ├── signup/               # Signup component
 │   │   │   ├── forgotpassword/       # Forgot password component
-│   │   │   └── resetpassword/        # Reset password component
+│   │   │   ├── resetpassword/        # Reset password component
+│   │   │   ├── passwordrenewal/      # Password renewal component
+│   │   │   └── confirmation-page/    # Reset link confirmation
 │   │   ├── leads/                    # Lead management
 │   │   │   ├── leads-list/           # Leads listing component
 │   │   │   └── lead-form/            # Lead form component
@@ -307,8 +353,12 @@ src/
 │   │   ├── Events/                   # Event management
 │   │   │   ├── events-list/          # Events listing component
 │   │   │   └── events-form/          # Event form component
-│   │   └── users/                    # User management
-│   │       └── users-list.component.ts # Users listing component
+│   │   ├── users/                    # User management
+│   │   │   └── users-list.component.ts # Users listing component
+│   │   ├── rolepermissions/          # Role and permissions management
+│   │   │   └── role-permission.component.ts # Role permissions component
+│   │   └── sessiontimeout/           # Session timeout management
+│   │       └── session-time-out.component.ts # Session timeout dialog
 │   ├── layout/                       # Layout components
 │   │   ├── admin-layout/             # Main admin layout
 │   │   ├── sidebar/                  # Navigation sidebar
@@ -322,7 +372,16 @@ src/
 │   │   ├── task.model.ts            # Task interface
 │   │   ├── note.model.ts            # Note interface
 │   │   ├── event.model.ts           # Event interface
+│   │   ├── permission.model.ts      # Permission interface
+│   │   ├── id.type.ts               # ID type definition
+│   │   ├── product-options.const.ts # Product options constants
 │   │   └── index.ts                 # Model exports
+│   ├── services/                     # Application services
+│   │   ├── auth.service.ts          # Authentication service
+│   │   ├── data.service.ts          # Data service for CRUD operations
+│   │   ├── excel-export.service.ts  # Excel export functionality
+│   │   ├── navigation.service.ts    # Navigation service
+│   │   └── app.config.ts            # App configuration
 │   ├── app.component.ts              # Root component
 │   ├── app.routes.ts                 # Application routes
 │   └── app.config.ts                 # App configuration
@@ -342,6 +401,7 @@ npm start                    # Start development server
 npm run build               # Build for production
 npm run watch               # Build and watch for changes
 npm test                    # Run unit tests
+npm run json-server         # Start JSON server for mock API
 
 # Backend (if using .NET)
 dotnet run                  # Start .NET API
@@ -365,17 +425,21 @@ export const environment = {
 - **Refresh Tokens**: Long-lived tokens for token renewal
 - **Automatic Refresh**: Seamless token renewal without user intervention
 - **Token Revocation**: Secure logout with server-side token invalidation
+- **Session Timeout Warnings**: User notifications before token expiration
+- **Concurrent Request Handling**: Prevents multiple refresh token requests
+- **Token Interceptor**: Automatic token attachment to HTTP requests
 
 ### Route Protection
 - **AuthGuard**: Protects routes requiring authentication
-- **PermissionGuard**: Protects routes based on user permissions
-- **RoleGuard**: Protects routes based on user roles
-- **NoDirectAccessGuard**: Prevents direct access to auth pages
+- **PermissionGuard**: Protects routes based on user permissions and roles
+- **NoDirectAccessGuard**: Prevents direct access to auth pages when already logged in
 
 ### UI Security
 - **Permission Directive**: Show/hide UI elements based on permissions
 - **Role-based Navigation**: Dynamic navigation based on user roles
 - **Secure Storage**: Tokens stored securely in localStorage
+- **Session Management**: Automatic session restoration and timeout handling
+- **Excel Export Security**: Permission-based export functionality
 
 ## 🚀 Deployment
 
@@ -402,6 +466,9 @@ dotnet publish -c Release -o ./publish
 2. **Token Expired**: Check if refresh token is working correctly
 3. **Permission Denied**: Verify user has required permissions
 4. **API Connection**: Ensure backend API is running on correct port
+5. **Session Timeout**: Check session timeout configuration and token expiry
+6. **Excel Export Issues**: Verify file-saver and xlsx dependencies are installed
+7. **Route Access**: Ensure proper role and permission configuration for routes
 
 ### Debug Mode
 Enable debug logging in `environment.ts`:
@@ -425,6 +492,42 @@ export const environment = {
 
 For support and questions, please contact the development team, connect with me on [LinkedIn](https://www.linkedin.com/in/ahmad-yousaf21), or create an issue in the repository.
 
+
+---
+
+## 🔧 Key Features Implemented
+
+### Authentication & Authorization
+- ✅ JWT-based authentication with access and refresh tokens
+- ✅ Role-based access control (RBAC) with SuperAdmin, Admin, and User roles
+- ✅ Permission-based authorization with granular module permissions
+- ✅ Password reset and renewal functionality
+- ✅ Session timeout management with user warnings
+- ✅ Automatic token refresh and session restoration
+
+### CRM Functionality
+- ✅ Complete CRUD operations for Leads, Deals, Contacts, Companies
+- ✅ Activity management (Tasks, Notes, Events) with entity association
+- ✅ User management with role assignment capabilities
+- ✅ Dynamic role and permissions management interface
+- ✅ Excel export functionality for data export
+
+### Technical Implementation
+- ✅ Angular 19 with standalone components and modern architecture
+- ✅ Reactive state management using Angular Signals
+- ✅ HTTP interceptors for automatic token handling
+- ✅ Route guards for authentication and authorization
+- ✅ Custom permission directive for UI-level security
+- ✅ Responsive design with Bootstrap 5 and Material Design
+- ✅ TypeScript with strict type checking and interfaces
+
+### Security Features
+- ✅ Token interceptor with automatic refresh on 401 errors
+- ✅ Session timeout warnings with user extension options
+- ✅ Secure token storage and management
+- ✅ Permission-based route protection
+- ✅ UI-level permission-based element visibility
+- ✅ Secure logout with token revocation
 
 ---
 
