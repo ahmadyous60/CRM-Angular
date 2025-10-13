@@ -1,0 +1,106 @@
+<section class="vh-100 d-flex align-items-center justify-content-center bg-gradient" style="background: linear-gradient(135deg, #d4fc79, #96e6a1);">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-6">
+        <div class="card border-0 shadow-lg rounded-4 animate-card">
+          <div class="card-body p-5">
+
+            <!-- Error Messages -->
+            <div *ngIf="errors.length > 0" class="alert alert-danger rounded-3 shadow-sm p-3 mb-3">
+              <ul class="mb-0">
+                <li *ngFor="let err of errors">{{ err }}</li>
+              </ul>
+            </div>
+
+            <h2 class="text-center mb-4 fw-bold text-gradient animate-title">Create Your Account</h2>
+            <form (ngSubmit)="onSignup()" #signupForm="ngForm" novalidate>
+              <!-- Name -->
+              <div class="form-floating mb-3 animate-input">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="name" 
+                  placeholder="Name"
+                  [(ngModel)]="name" 
+                  name="name" 
+                  required
+                />
+                <label for="name">Name</label>
+              </div>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !name">Name is required</div>
+
+              <!-- Username -->
+              <div class="form-floating mb-3 animate-input">
+                <input 
+                  type="text" 
+                  class="form-control" 
+                  id="username" 
+                  placeholder="Username"
+                  [(ngModel)]="username" 
+                  name="username" 
+                  required
+                />
+                <label for="username">Username</label>
+              </div>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !username">Username is required</div>
+
+              <!-- Email -->
+              <div class="form-floating mb-3 animate-input">
+                <input 
+                  type="email" 
+                  class="form-control" 
+                  id="email" 
+                  placeholder="Email"
+                  [(ngModel)]="email" 
+                  name="email" 
+                  required
+                />
+                <label for="email">Email</label>
+              </div>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !email">Email is required</div>
+
+              <!-- Password -->
+              <div class="form-floating mb-3 animate-input position-relative">
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  class="form-control" 
+                  id="password" 
+                  placeholder="Password"
+                  [(ngModel)]="password" 
+                  name="password" 
+                  required
+                />
+                <label for="password">Password</label>
+                <button 
+                  type="button" 
+                  class="btn position-absolute top-50 end-0 translate-middle-y me-3 p-0 border-0 bg-transparent"
+                  (click)="togglePassword()" tabindex="-1">
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              <div class="text-danger mt-1" *ngIf="signupForm.submitted && !password">Password is required</div>
+
+              <!-- Sign Up Button -->
+              <button 
+                type="submit" 
+                class="btn btn-lg w-100 text-white fw-semibold animate-button"
+                [disabled]="signupForm.invalid"
+                style="background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); border: none;">
+                Sign Up
+              </button>
+
+              <!-- Back to Login -->
+              <a 
+                routerLink="/login" 
+                class="btn btn-lg w-100 mt-3 fw-semibold animate-button-alt"
+                style="background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; border: none;">
+                Already have an account? Login
+              </a>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

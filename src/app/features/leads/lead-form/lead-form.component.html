@@ -1,0 +1,57 @@
+    <div class="card p-3">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label text-white">Name</label>
+            <input class="form-control" formControlName="name" placeholder="Lead Name">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-white">Email</label>
+            <input class="form-control" formControlName="email" placeholder="Lead Email">
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-white">Phone</label>
+            <input class="form-control" formControlName="phone" placeholder="+923001234567">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-white">Status</label>
+            <select class="form-select" formControlName="status">
+              <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label text-white">Source</label>
+            <select class="form-select" formControlName="source">
+              <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-white">Product Category</label>
+            <select class="form-select" formControlName="productCategory">
+              <option *ngFor="let category of productCategories; trackBy: trackByCategory" [value]="category">
+                {{ category }}
+              </option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label text-white">Product</label>
+            <select class="form-select" formControlName="product">
+              <option *ngFor="let product of availableProducts; trackBy: trackByProduct" [value]="product">
+                {{ product }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-4">
+          <button class="btn btn-primary" [disabled]="form.invalid">Save</button>
+          <button type="button" class="btn btn-outline-light" (click)="cancel()">Cancel</button>
+        </div>
+      </form>
+    </div>

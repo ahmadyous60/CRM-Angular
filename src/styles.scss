@@ -1,0 +1,29 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+/* Vibrant theme */
+:root{
+  --primary:#7C3AED; /* purple-600 */
+  --primary-2:#06B6D4; /* cyan-500 */
+  --bg:#0F172A;  /* slate-900 */
+  --card:#111827; /* gray-900 */
+  --text:#E5E7EB; /* gray-200 */
+  --muted:#9CA3AF; /* gray-400 */
+}
+body { background: linear-gradient(135deg,var(--bg),#121929 60%, #0b1022); color: var(--text); }
+.card { background: linear-gradient(180deg,#121826,#0f1626); border: 1px solid rgba(255,255,255,.08); }
+.table { color: var(--text); }
+a, .nav-link { color: var(--text); }
+.btn-primary{
+  background: linear-gradient(90deg,var(--primary),var(--primary-2));
+  border: 0;
+}
+.btn-primary:hover{ filter: brightness(1.1); }
+.sidebar{
+  background: #0b1020;
+  border-right:1px solid rgba(255,255,255,.08)
+}
+.sidebar .active{ background: rgba(124,58,237,.18); border-radius: .75rem; }
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

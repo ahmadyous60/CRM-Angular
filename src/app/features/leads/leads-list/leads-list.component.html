@@ -1,0 +1,368 @@
+         <div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Leads</h3>
+  <div>
+    <button *hasPermission="'Leads.Export'" class="btn btn-success me-2" (click)="exportLeads()">
+      <i class="bi bi-file-earmark-excel"></i> Export
+    </button>
+    <a routerLink="/leads/new" class="btn btn-primary" *hasPermission="'Leads.Add'">
+      <i class="bi bi-plus-lg"></i> New Lead
+    </a>
+  </div>
+</div>
+
+<div class="card p-3">
+  <!-- Filters -->
+<div class="row g-2 mb-3">
+  <div class="col-md-10">
+    <div class="input-group">
+      <input type="text"
+             class="form-control"
+             placeholder="Search name or email"
+             [ngModel]="q()"
+             (ngModelChange)="q.set($event)">
+
+      <button *ngIf="q()" 
+              type="button" 
+              class="btn btn-outline-secondary"
+              (click)="q.set('')">
+        <i class="bi bi-x-circle"></i>
+      </button>
+    </div>
+  </div>
+    <div class="col-md-2">
+      <select class="form-select"
+              [ngModel]="status()"
+              (ngModelChange)="status.set($event)">
+        <option value="">All Statuses</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table -->
+  
+  <div class="table-responsive">
+  <table class="table table-hover align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Source</th>
+        <th>Product Category</th>
+        <th>Product</th>
+        <th (click)="sortBy('createdAt')" role="button" style="cursor: pointer;" aria-label="Sort by Created Date">
+          Created <i class="bi bi-sort-down ms-1"></i>
+        </th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let lead of page(); trackBy: trackByLead">
+        <td class="text-truncate" style="max-width: 150px;">{{ lead.name }}</td>
+        <td class="text-truncate" style="max-width: 200px;">{{ lead.email }}</td>
+        <td>{{ lead.phone }}</td>
+        <td>
+          <span class="badge" [ngClass]="getStatusBadgeClass(lead.status)">
+            {{ lead.status }}
+          </span>
+        </td>
+        <td>{{ lead.source }}</td>
+        <td>{{ lead.productCategory }}</td>
+        <td>{{ lead.product }}</td>
+        <td class="created-date-cell">{{ lead.createdAt | date: 'medium' }}</td>
+        <td class="text-end">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Lead Actions">
+            <button *hasPermission="'Leads.Edit'" class="btn btn-outline-primary ms-2" (click)="edit(lead)" title="Edit Lead">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button *hasPermission="'Leads.Delete'" class="btn btn-outline-danger" (click)="confirmDelete(lead.id)" title="Delete Lead">
+              <i class="bi bi-trash"></i>
+            </button>
+            <button *hasPermission="'Leads.View'" class="btn btn-outline-info" (click)="view(lead)" title="View Lead">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+
+      <tr *ngIf="page().length === 0">
+        <td colspan="9" class="text-center text-muted py-4">
+          <i class="bi bi-search fs-4 d-block mb-2"></i>
+          No results found
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <small class="text-secondary">
+      Showing {{ (currentPage() - 1) * pageSize() + 1 }}–
+      {{ Math.min(currentPage() * pageSize(), filtered().length) }}
+      of {{ filtered().length }}
+    </small>
+    <div class="btn-group">
+      <button class="btn btn-outline-light btn-sm"
+              [disabled]="currentPage() === 1"
+              (click)="prevPage()">Prev</button>
+      <button class="btn btn-outline-light btn-sm"
+              [disabled]="currentPage() * pageSize() >= filtered().length"
+              (click)="nextPage()">Next</button>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+<div class="modal fade show d-block" *ngIf="editing()" tabindex="-1" aria-labelledby="editLeadModalLabel" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <form #editForm="ngForm" (ngSubmit)="update()">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editLeadModalLabel">Update Lead</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="cancelEdit()"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Form Fields -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-control" [(ngModel)]="editLead!.name" name="name" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" [(ngModel)]="editLead!.email" name="email" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-control" [(ngModel)]="editLead!.phone" name="phone" inputmode="tel" autocomplete="tel">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select class="form-select" [(ngModel)]="editLead!.status" name="status">
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Source</label>
+              <select class="form-select" [(ngModel)]="editLead!.source" name="source">
+                <option *ngFor="let s of sources" [value]="s">{{ s }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Product Category</label>
+              <select class="form-select" [(ngModel)]="editLead!.productCategory" name="productCategory" (ngModelChange)="onCategoryChange($event)">
+                <option *ngFor="let c of productCategories" [value]="c">{{ c }}</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Product</label>
+              <select class="form-select" [(ngModel)]="editLead!.product" name="product">
+                <option *ngFor="let p of availableProducts" [value]="p">{{ p }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Save</button>
+          <button type="button" class="btn btn-secondary" (click)="cancelEdit()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Delete Modal -->
+  <div class="modal fade show d-block" *ngIf="deleting()" style="background: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this lead?
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+          <button class="btn btn-danger" (click)="deleteConfirmed()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <!-- View Lead Modal -->
+
+  <div class="modal fade" id="viewLeadModal" tabindex="-1" aria-labelledby="viewLeadLabel" aria-hidden="true">
+      
+    <div class="modal-dialog modal-lg modal-dialog-centered custom-modal-width">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+
+          <!-- Header -->
+          <div class="modal-header bg-primary text-white rounded-top-4 px-4 py-3">
+            <h5 class="modal-title fw-semibold d-flex align-items-center" id="viewLeadLabel">
+              <i class="bi bi-person-vcard-fill me-2 fs-5"></i> Lead Information
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <!-- Body -->
+          <div class="modal-body bg-light px-4 py-4">
+
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs mb-4" id="leadTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active text-secondary" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
+                  <i class="bi bi-card-list me-1"></i> Details
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link text-secondary" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab">
+                  <i class="bi bi-check2-square me-1"></i> Tasks
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link text-secondary" id="notes-tab" data-bs-toggle="tab" data-bs-target="#notes" type="button" role="tab">
+                  <i class="bi bi-journal-text me-1"></i> Notes
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link text-secondary" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">
+                  <i class="bi bi-calendar-event me-1"></i> Events
+                </button>
+              </li>
+            </ul>
+
+            <!-- Tabs Content -->
+            <div class="tab-content" id="leadTabContent">
+
+              <!-- Details Tab -->
+              <div class="tab-pane fade show active" id="details" role="tabpanel">
+                <div class="row g-4">
+
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Full Name</label>
+                    <div class="p-3 rounded-3 bg-white shadow-sm border">
+                      <i class="bi bi-person-fill text-primary me-2"></i> {{ selectedLead?.name }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Email Address</label>
+                    <div class="p-3 rounded-3 bg-white shadow-sm border">
+                      <i class="bi bi-envelope-fill text-danger me-2"></i> {{ selectedLead?.email }}
+                    </div>
+                  </div>  
+
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Phone Number</label>
+                    <div class="p-3 rounded-3 bg-white shadow-sm border">
+                      <i class="bi bi-telephone-fill text-success me-2"></i> {{ selectedLead?.phone }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Status</label>
+                    <div>
+                      <span class="badge rounded-pill px-3 py-2 fs-6"
+                        [ngClass]="{
+                          'bg-success': selectedLead?.status === 'Won',
+                          'bg-danger': selectedLead?.status === 'Lost',
+                          'bg-warning text-dark': selectedLead?.status === 'Qualified',
+                          'bg-secondary': selectedLead?.status === 'New'
+                        }">
+                        {{ selectedLead?.status }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Lead Source</label>
+                    <div class="p-3 rounded-3 bg-white shadow-sm border">
+                      <i class="bi bi-globe2 text-info me-2"></i> {{ selectedLead?.source }}
+                    </div>
+                  </div>
+
+                 <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Product Category</label>
+                    <div class="p-3 rounded-3 bg-white shadow-sm border">
+                      <i class="bi bi-box-seam text-warning me-2"></i> {{ selectedLead?.productCategory }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Product</label>
+                    <div class="p-3 rounded-3 bg-white shadow-sm border">
+                      <i class="bi bi-box text-info me-2"></i> {{ selectedLead?.product }}
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label fw-bold text-secondary small mb-1">Created At</label>
+                    <div class="p-3 rounded-3 bg-white shadow-sm border">
+                      <i class="bi bi-calendar-event text-primary me-2"></i> {{ selectedLead?.createdAt | date:'medium' }}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+
+            <!-- Tasks Tab -->
+                    <div 
+                        class="tab-pane fade" 
+                        id="tasks" 
+                        role="tabpanel">
+                        <app-tasks-list
+                          *ngIf="selectedLead?.id"
+                          [entityType]="'Lead'" 
+                          [entityId]="selectedLead?.id || ''"
+                          mode="compact">
+                        </app-tasks-list>
+                      </div>
+                <!-- Notes Tab -->
+                <div class="tab-pane fade" id="notes" role="tabpanel">
+                    <app-notes-list
+                      *ngIf="selectedLead?.id"
+                      [entityType]="'Lead'" 
+                      [entityId]="selectedLead?.id || ''"
+                      mode="compact">
+                    </app-notes-list>
+                  </div>
+
+              <!-- Events Tab -->
+              <div class="tab-pane fade" id="events" role="tabpanel">
+                    <app-events-list
+                      *ngIf="selectedLead?.id"
+                      [entityType]="'Lead'" 
+                      [entityId]="selectedLead?.id || ''"
+                      mode="compact">
+                    </app-events-list>
+                  </div>
+
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="modal-footer bg-white rounded-bottom-4 px-4 py-3 d-flex justify-content-end">
+            <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i> Close
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>

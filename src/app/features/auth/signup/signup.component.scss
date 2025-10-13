@@ -1,0 +1,50 @@
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-card {
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  animation: fadeInUp 0.8s ease-in-out;
+}
+
+.text-gradient {
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fadeInUp 1s ease forwards;
+}
+.animate-title {
+  animation-delay: 0.3s;
+}
+
+.animate-input {
+  animation: fadeInUp 1s ease forwards;
+}
+
+.animate-button,
+.animate-button-alt {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.animate-button::before,
+.animate-button-alt::before {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 200%; height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+  transition: left 0.5s ease;
+}
+.animate-button:hover::before,
+.animate-button-alt:hover::before {
+  left: 100%;
+}
+.animate-button:hover,
+.animate-button-alt:hover {
+  transform: translateY(-2px) scale(1.01);
+}

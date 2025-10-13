@@ -1,0 +1,378 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Contacts</h3>
+  <div class="d-flex gap-2">
+    <!-- Export Button -->
+    <button *hasPermission="'Contacts.Export'"
+            class="btn btn-success" 
+            (click)="exportContatcts()">
+      <i class="bi bi-file-earmark-excel me-2"></i> Export
+    </button>
+
+    <!-- New Contact Button -->
+    <a routerLink="/contacts/new" 
+       class="btn btn-primary "
+       *hasPermission="'Contacts.Add'">
+      <i class="bi bi-plus-lg me-2"></i> New Contact
+    </a>
+  </div>
+</div>
+
+
+<div class="card p-3">
+  <!-- Search -->
+  <div class="mb-3">
+    <div class="row g-2">
+      <div class="col-12">
+        <div class="input-group">
+          <input type="text" class="form-control" 
+                 placeholder="Search name, email, or mobile"
+                 [ngModel]="q()" 
+                 (ngModelChange)="q.set($event)">
+          <button *ngIf="q()" class="btn btn-outline-secondary" type="button" (click)="q.set('')">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="custom-scroll">
+  <table class="table table-hover align-middle mb-0">
+    <thead class="table-light">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Mobile</th>
+        <th>Date of Birth</th>
+        <th>Reporting To</th>
+        <th>Mailing City</th>
+        <th>Other City</th>
+        <th>Created</th>
+        <th class="text-end">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let contact of page()">
+        <td>{{ contact.firstName }} {{ contact.lastName }}</td>
+        <td>{{ contact.email }}</td>
+        <td>{{ contact.mobile || '-' }}</td>
+        <td>{{ contact.dob ? (contact.dob | date:'mediumDate') : '-' }}</td>
+        <td>{{ contact.reportingTo || '-' }}</td>
+        <td>{{ contact.mailingCity || '-' }}</td>
+        <td>{{ contact.otherCity || '-' }}</td>
+        <td>{{ contact.createdAt | date:'medium' }}</td>
+        <td class="text-end">
+          <button *hasPermission="'Contacts.Edit'"
+                class="btn btn-sm btn-outline-primary"
+                (click)="edit(contact)"
+                [attr.aria-label]="'Edit contact ' + contact.firstName + ' ' + contact.lastName">
+          <i class="bi bi-pencil" aria-hidden="true"></i>
+        </button>
+          <button *hasPermission="'Contacts.Delete'"
+                  class="btn btn-sm btn-outline-danger ms-2"
+                  (click)="confirmDelete(contact.id)"
+                  [attr.aria-label]="'Delete contact ' + contact.firstName + ' ' + contact.lastName">
+            <i class="bi bi-trash" aria-hidden="true"></i>
+          </button>
+          <button *hasPermission="'Contacts.View'"
+                  class="btn btn-sm btn-outline-info ms-2"
+                  (click)="view(contact)"
+                  [attr.aria-label]="'View contact ' + contact.firstName + ' ' + contact.lastName">
+            <i class="bi bi-eye" aria-hidden="true"></i>
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="page().length === 0">
+        <td colspan="10" class="text-center text-muted py-4">No results</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center">
+    <small class="text-secondary">
+      Showing {{(currentPage()-1)*pageSize()+1}}–{{Math.min(currentPage()*pageSize(), filtered().length)}} 
+      of {{filtered().length}}
+    </small>
+    <div class="btn-group">
+      <button class="btn btn-outline-light btn-sm" [disabled]="currentPage()===1" (click)="prevPage()" aria-label="Previous Page">Prev</button>
+      <button class="btn btn-outline-light btn-sm" [disabled]="currentPage()*pageSize()>=filtered().length" (click)="nextPage()" aria-label="Next Page">Next</button>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+<div class="modal fade show d-block" *ngIf="editing()" tabindex="-1" aria-labelledby="editContactModalLabel" style="background-color: rgba(0, 0, 0, 0.5);" role="dialog" aria-modal="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-sm-down">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editContactModalLabel">Update Contact</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="cancelEdit()"></button>
+      </div>
+
+      <div class="modal-body">
+        <form #editForm="ngForm" (ngSubmit)="update()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.firstName" name="firstName" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.lastName" name="lastName" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" [(ngModel)]="editContact!.email" name="email" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mobile</label>
+              <input type="tel" class="form-control" [(ngModel)]="editContact!.mobile" name="mobile" inputmode="tel" autocomplete="tel">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Date of Birth</label>
+              <input type="date" class="form-control" [(ngModel)]="editContact!.dob" name="dob">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Reporting To</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.reportingTo" name="reportingTo">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mailing Street</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.mailingStreet" name="mailingStreet">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Other Street</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.otherStreet" name="otherStreet">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mailing City</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.mailingCity" name="mailingCity">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Other City</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.otherCity" name="otherCity">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mailing State</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.mailingState" name="mailingState">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Other State</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.otherState" name="otherState">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mailing Zip</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.mailingZip" name="mailingZip">
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mailing Country</label>
+              <input type="text" class="form-control" [(ngModel)]="editContact!.mailingCountry" name="mailingCountry">
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="editForm.invalid">Save Changes</button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Delete Modal -->
+  <div class="modal fade show d-block" *ngIf="deleting()" style="background: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Delete</h5>
+          <button type="button" class="btn-close" (click)="cancelDelete()"></button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete this Contact?
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
+          <button class="btn btn-danger" (click)="deleteConfirmed()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- View Contact Modal -->
+<div class="modal fade" id="viewContactModal" tabindex="-1" aria-labelledby="viewContactLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+
+      <!-- Header -->
+      <div class="modal-header bg-primary text-white rounded-top-4 px-4 py-3">
+        <h5 class="modal-title fw-semibold d-flex align-items-center" id="viewContactLabel">
+          <i class="bi bi-person-lines-fill me-2 fs-5"></i> Contact Information
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body bg-light px-4 py-4">
+
+        <!-- Tabs Navigation -->
+        <ul class="nav nav-tabs mb-4" id="contactTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active text-secondary" id="contact-details-tab" data-bs-toggle="tab" data-bs-target="#contact-details" type="button" role="tab">
+              <i class="bi bi-card-list me-1"></i> Details
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link text-secondary" id="contact-tasks-tab" data-bs-toggle="tab" data-bs-target="#contact-tasks" type="button" role="tab">
+              <i class="bi bi-check2-square me-1"></i> Tasks
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link text-secondary" id="contact-notes-tab" data-bs-toggle="tab" data-bs-target="#contact-notes" type="button" role="tab">
+              <i class="bi bi-journal-text me-1"></i> Notes
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link text-secondary" id="contact-events-tab" data-bs-toggle="tab" data-bs-target="#contact-events" type="button" role="tab">
+              <i class="bi bi-calendar-event me-1"></i> Events
+            </button>
+          </li>
+        </ul>
+
+        <!-- Tabs Content -->
+        <div class="tab-content" id="contactTabContent">
+
+          <!-- Details Tab -->
+          <div class="tab-pane fade show active" id="contact-details" role="tabpanel">
+            <div *ngIf="selectedcontact" class="row g-4">
+
+              <!-- Full Name -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Full Name</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-person-fill text-primary me-2"></i>
+                  {{ selectedcontact.firstName }} {{ selectedcontact.lastName }}
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Email</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-envelope-fill text-danger me-2"></i>
+                  {{ selectedcontact.email }}
+                </div>
+              </div>
+
+              <!-- Mobile -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Mobile</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-phone-fill text-success me-2"></i>
+                  {{ selectedcontact.mobile || '-' }}
+                </div>
+              </div>
+
+              <!-- Date of Birth -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Date of Birth</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-calendar-heart text-warning me-2"></i>
+                  {{ selectedcontact.dob | date:'longDate' }}
+                </div>
+              </div>
+
+              <!-- Reporting To -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Reporting To</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-person-badge text-info me-2"></i>
+                  {{ selectedcontact.reportingTo || '-' }}
+                </div>
+              </div>
+
+              <!-- Address -->
+              <div class="col-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Address</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                  {{ selectedcontact.mailingStreet || '' }} {{ selectedcontact.mailingCity || '' }}
+                  {{ selectedcontact.mailingState || '' }} {{ selectedcontact.mailingZip || '' }}
+                  {{ selectedcontact.mailingCountry || '' }}
+                </div>
+              </div>
+
+              <!-- Created -->
+              <div class="col-md-6">
+                <label class="form-label fw-bold text-secondary small mb-1">Created At</label>
+                <div class="p-3 rounded-3 bg-white shadow-sm border">
+                  <i class="bi bi-calendar-event text-primary me-2"></i>
+                  {{ selectedcontact.createdAt | date:'medium' }}
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Tasks Tab -->
+          <div class="tab-pane fade" id="contact-tasks" role="tabpanel">
+            <app-tasks-list
+              *ngIf="selectedcontact?.id"
+              [entityType]="'Contact'"
+              [entityId]="selectedcontact?.id || ''"
+              mode="compact">
+            </app-tasks-list>
+          </div>
+
+          <!-- Notes Tab -->
+          <div class="tab-pane fade" id="contact-notes" role="tabpanel">
+            <app-notes-list
+              *ngIf="selectedcontact?.id"
+              [entityType]="'Contact'"
+              [entityId]="selectedcontact?.id || ''"
+              mode="compact">
+            </app-notes-list>
+          </div>
+
+          <!-- Events Tab -->
+          <div class="tab-pane fade" id="contact-events" role="tabpanel">
+            <app-events-list
+              *ngIf="selectedcontact?.id"
+              [entityType]="'Contact'"
+              [entityId]="selectedcontact?.id || ''"
+              mode="compact">
+            </app-events-list>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer bg-white rounded-bottom-4 px-4 py-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i> Close
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+

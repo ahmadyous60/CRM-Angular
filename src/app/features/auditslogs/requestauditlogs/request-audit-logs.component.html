@@ -1,0 +1,171 @@
+<div class="container mt-4">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold mb-0">
+      <i class="bi bi-globe2 me-2"></i> Activity Audit Logs
+    </h3>
+    <button class="btn btn-outline-secondary btn-sm" (click)="loadRequestLogs()">
+      <i class="bi bi-arrow-repeat me-1"></i> Refresh
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="row g-2 mb-3">
+    <div class="col-md-6">
+      <input type="text" class="form-control form-control-sm" placeholder="Search by user or URL..." [(ngModel)]="searchText">
+    </div>
+    <div class="col-md-6">
+      <input type="date" class="form-control form-control-sm" [(ngModel)]="dateFilter">
+    </div>
+  </div>
+
+  <!-- Logs Table -->
+  <div class="card p-3 shadow-sm">
+    <div class="table-responsive" style="max-height: 60vh; overflow-y: auto;">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>User</th>
+            <th>Method</th>
+            <th>URL</th>
+            <th>IP Address</th>
+            <th>Timestamp</th>
+            <th class="text-end">View</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of page()">
+            <td>{{ log.userName }}</td>
+            <td>
+              <span class="badge rounded-pill px-3 py-2 shadow-sm"
+                    [ngClass]="{
+                      'bg-success-subtle text-success border': log.httpMethod === 'GET',
+                      'bg-primary-subtle text-primary border': log.httpMethod === 'POST',
+                      'bg-warning-subtle text-warning border': log.httpMethod === 'PUT',
+                      'bg-danger-subtle text-danger border': log.httpMethod === 'DELETE'
+                    }">
+                {{ log.httpMethod }}
+              </span>
+            </td>
+            <td class="text-truncate" style="max-width: 250px;">{{ log.url }}</td>
+            <td>{{ log.ipAddress }}</td>
+            <td>{{ log.timestamp | date:'short' }}</td>
+            <td class="text-end">
+              <button class="btn btn-sm btn-outline-primary" (click)="viewRequestLog(log)">
+                <i class="bi bi-eye"></i>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="page().length === 0">
+            <td colspan="6" class="text-center text-muted py-4">No logs found</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <small class="text-secondary">
+        Showing {{ (currentPage() - 1) * pageSize() + 1 }}–{{ Math.min(currentPage() * pageSize(), filtered().length) }}
+        of {{ filtered().length }}
+      </small>
+      <div class="btn-group">
+        <button class="btn btn-outline-light btn-sm" [disabled]="currentPage() === 1" (click)="prevPage()">Prev</button>
+        <button class="btn btn-outline-light btn-sm" [disabled]="currentPage() * pageSize() >= filtered().length" (click)="nextPage()">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="requestLogModal" tabindex="-1" aria-labelledby="requestLogModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 shadow rounded-4 overflow-hidden bg-body-tertiary">
+      <!-- Modal Header -->
+      <div class="modal-header border-0 bg-dark text-white py-3">
+        <h5 class="modal-title fw-semibold d-flex align-items-center gap-2" id="requestLogModalLabel">
+          <i class="bi bi-activity fs-5 text-info"></i> Request Log Details
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body bg-white px-4 py-4" style="max-height: 70vh; overflow-y: auto;">
+        <div *ngIf="selectedLog" class="p-4 rounded-4 bg-light border shadow-sm position-relative">
+          <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-info-subtle text-info border shadow-sm px-3">
+            Log Information
+          </span>
+
+          <div class="row g-4 mt-3">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-person-circle text-secondary fs-5"></i>
+                <div>
+                  <div class="text-muted small fw-semibold">User</div>
+                  <div class="fw-bold">{{ selectedLog.userName }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-clock-history text-muted fs-5"></i>
+                <div>
+                  <div class="text-muted small fw-semibold">Timestamp</div>
+                  <div class="text-muted">{{ selectedLog.timestamp | date:'medium' }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4 mt-2">
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-lightning-charge-fill text-warning fs-5"></i>
+                <div>
+                  <div class="text-muted small fw-semibold">HTTP Method</div>
+                  <span class="badge rounded-pill bg-secondary-subtle text-secondary px-3 py-2 shadow-sm">
+                    {{ selectedLog.httpMethod }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-geo-alt-fill text-info fs-5"></i>
+                <div>
+                  <div class="text-muted small fw-semibold">IP Address</div>
+                  <div class="fw-bold">{{ selectedLog.ipAddress }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <div class="text-muted small fw-semibold mb-2">URL</div>
+            <pre class="code-box bg-dark text-light p-3 rounded-3 shadow-sm small">{{ selectedLog.url }}</pre>
+          </div>
+
+          <div class="mt-4">
+            <div class="text-muted small fw-semibold mb-2">Request Body</div>
+            <pre *ngIf="selectedLog.requestBody; else noBody" class="code-box bg-success-subtle text-success p-3 rounded-3 shadow-sm small">
+{{ selectedLog.requestBody }}
+            </pre>
+            <ng-template #noBody>
+              <div class="text-muted small fst-italic">No request body recorded.</div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer border-0 bg-body-secondary d-flex justify-content-between px-4 py-3 rounded-bottom-4">
+        <small class="text-muted">
+          <i class="bi bi-info-circle me-1"></i> Auto-captured request details for API monitoring
+        </small>
+        <button type="button" class="btn btn-outline-dark rounded-pill px-4" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

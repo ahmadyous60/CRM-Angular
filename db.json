@@ -1,0 +1,279 @@
+{
+  "leads": [
+    {
+      "id": "7088",
+      "createdAt": "2025-08-22T16:49:10.308Z",
+      "name": "usman",
+      "email": "usman@gmail.com",
+      "phone": "+9230487617881",
+      "status": "New",
+      "source": "Website"
+    },
+    {
+      "id": "9662",
+      "createdAt": "2025-08-23T10:45:21.680Z",
+      "name": "Ahmad Yousaf",
+      "email": "ahmedyousaf115@gmail.com",
+      "phone": "+923021149591",
+      "status": "Lost",
+      "source": "Cold Call"
+    },
+    {
+      "id": "b2ea",
+      "createdAt": "2025-08-23T10:50:53.929Z",
+      "name": "Usman",
+      "email": "usman@email.com",
+      "phone": "+9230987651",
+      "status": "Won",
+      "source": "Website"
+    },
+    {
+      "id": "7367",
+      "createdAt": "2025-08-23T10:51:21.090Z",
+      "name": "Hassan",
+      "email": "hassan@email.com",
+      "phone": "+92345987689",
+      "status": "Lost",
+      "source": "Email"
+    },
+    {
+      "id": "0f3c",
+      "createdAt": "2025-08-23T10:52:12.822Z",
+      "name": "sania",
+      "email": "sania@gmail.com",
+      "phone": "+923456890111",
+      "status": "Lost",
+      "source": "Email"
+    },
+    {
+      "id": "51b2",
+      "createdAt": "2025-08-23T10:53:09.911Z",
+      "name": "Ayesha",
+      "email": "ayesha@email.com",
+      "phone": "+927896543221",
+      "status": "Won",
+      "source": "Email"
+    },
+    {
+      "id": "1083",
+      "createdAt": "2025-08-23T10:53:39.966Z",
+      "name": "alishba",
+      "email": "alishba@gmail.com",
+      "phone": "+92000000000",
+      "status": "Qualified",
+      "source": "Cold Call"
+    },
+    {
+      "id": "4d68",
+      "createdAt": "2025-08-29T09:30:26.686Z",
+      "name": "Imran",
+      "email": "imran@gmail.com",
+      "phone": "+92000000",
+      "status": "New",
+      "source": "Email",
+      "product": "Digital Marketing"
+    },
+    {
+      "id": "88f9",
+      "createdAt": "2025-09-01T07:19:11.121Z",
+      "name": "munawwar",
+      "email": "munawwar@email.com",
+      "phone": "+90000001001010",
+      "status": "Qualified",
+      "source": "Cold Call",
+      "product": "Website Development"
+    }
+  ],
+  "deals": [
+    {
+      "id": "136d",
+      "createdAt": "2025-08-23T11:24:14.492Z",
+      "title": "mercedes",
+      "amount": 32000000,
+      "stage": "Closed Won",
+      "closeDate": "2025-08-19"
+    },
+    {
+      "id": "a2ea",
+      "createdAt": "2025-08-23T11:24:34.872Z",
+      "title": "honda",
+      "amount": 7800000,
+      "stage": "Closed Won",
+      "closeDate": "2025-08-22"
+    },
+    {
+      "id": "2d09",
+      "createdAt": "2025-08-23T11:28:06.372Z",
+      "title": "cd70",
+      "amount": 2700000,
+      "stage": "Negotiation",
+      "closeDate": "2025-08-02"
+    },
+    {
+      "id": "8f5f",
+      "createdAt": "2025-08-23T11:29:27.714Z",
+      "title": "cd125",
+      "amount": 300000,
+      "stage": "Proposal",
+      "closeDate": "2025-08-25"
+    },
+    {
+      "id": "6ebd",
+      "createdAt": "2025-08-23T11:34:40.131Z",
+      "title": "BMW",
+      "amount": 90000000,
+      "stage": "Proposal",
+      "closeDate": "2025-08-29"
+    },
+    {
+      "id": "3a60",
+      "createdAt": "2025-08-23T11:38:07.615Z",
+      "title": "toyota",
+      "amount": 8900000,
+      "stage": "Prospecting",
+      "closeDate": "2025-08-29"
+    },
+    {
+      "id": "6e0e",
+      "createdAt": "2025-08-24T05:59:54.931Z",
+      "title": "nissan",
+      "amount": 89000,
+      "stage": "Negotiation",
+      "closeDate": "2025-08-24"
+    },
+    {
+      "id": "1be6",
+      "createdAt": "2025-08-29T09:38:07.210Z",
+      "title": "toyota",
+      "amount": 90000000,
+      "stage": "Negotiation",
+      "closeDate": "2025-08-30"
+    }
+  ],
+  "contacts": [
+    {
+      "id": "779e",
+      "createdAt": "2025-08-23T11:11:53.636Z",
+      "firstName": "usman",
+      "lastName": "raza",
+      "email": "usman@gmail.com",
+      "phone": "03021148097"
+    },
+    {
+      "id": "d93e",
+      "createdAt": "2025-08-23T11:43:28.683Z",
+      "firstName": "alishba",
+      "lastName": "butt",
+      "email": "alishba@gmail.com",
+      "phone": "+9211100000"
+    },
+    {
+      "id": "1a60",
+      "createdAt": "2025-08-23T11:43:50.119Z",
+      "firstName": "ahmad",
+      "lastName": "yousah",
+      "email": "ahmad@gmail.com",
+      "phone": "+923021149591"
+    },
+    {
+      "id": "cfcf",
+      "createdAt": "2025-08-23T11:44:56.363Z",
+      "firstName": "ali",
+      "lastName": "Raza",
+      "email": "ali@gmai.com",
+      "phone": ""
+    },
+    {
+      "id": "4bc0",
+      "createdAt": "2025-08-23T11:45:25.146Z",
+      "firstName": "ishma",
+      "lastName": "fatima",
+      "email": "ishma@gmail.com",
+      "phone": ""
+    },
+    {
+      "id": "e975",
+      "createdAt": "2025-08-29T09:35:58.883Z",
+      "firstName": "Ali ",
+      "lastName": "Raza",
+      "email": "ali@gmai.com",
+      "phone": "0000000000"
+    }
+  ],
+  "companies": [
+    {
+      "id": "e935",
+      "createdAt": "2025-08-23T11:55:41.782Z",
+      "name": "IT Genesis",
+      "industry": "Software Hosue",
+      "website": "https://itgenesis.net/"
+    },
+    {
+      "id": "e355",
+      "createdAt": "2025-08-23T11:57:03.659Z",
+      "name": "Speridian Technologies",
+      "industry": "It Services and It Consulting",
+      "website": "https://www.speridian.com/"
+    },
+    {
+      "id": "eaf1",
+      "createdAt": "2025-08-23T11:58:28.987Z",
+      "name": "Bashir Neurospine Institute",
+      "industry": "HealthCare",
+      "website": "https://bni.com.pk/"
+    },
+    {
+      "id": "0889",
+      "createdAt": "2025-08-23T11:59:17.743Z",
+      "name": "Hameed Latif Hospital",
+      "industry": "Healthcare",
+      "website": "http://www.hameedlatifhospital.com/"
+    },
+    {
+      "id": "9eda",
+      "createdAt": "2025-08-29T09:37:09.001Z",
+      "name": "Crewlogix technologies",
+      "industry": "Software House",
+      "website": "https://crewlogix.com/"
+    },
+    {
+      "id": "6bba",
+      "createdAt": "2025-08-29T10:53:49.627Z",
+      "name": "Recurso Labs",
+      "industry": "Software Company",
+      "website": "https://recursolabs.com/"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "username": "ahmad",
+      "password": "123456",
+      "name": "Ahmad Yousaf"
+    },
+    {
+      "id": "2",
+      "username": "usman",
+      "password": "123456",
+      "name": "Usman Raza"
+    },
+    {
+      "id": "4e7f",
+      "username": "lisho",
+      "password": "9087618",
+      "name": "alishba kashif"
+    },
+    {
+      "id": "6dcc",
+      "username": "Imsha",
+      "password": "8907612",
+      "name": "Imsha Rehman"
+    },
+    {
+      "id": "c8d4",
+      "username": "Amna",
+      "password": "123456",
+      "name": "Amna Rehman"
+    }
+  ]
+}

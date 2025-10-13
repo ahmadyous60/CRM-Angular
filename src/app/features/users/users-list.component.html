@@ -1,0 +1,132 @@
+<div class="container py-4">
+  <h3 class="mb-4">👤 User Management</h3>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Full Name</th>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Roles</th>
+          <th class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <span *ngIf="user.roles.includes('superadmin')" class="badge bg-dark">superadmin</span>
+            <select *ngIf="!user.roles.includes('superadmin')"
+                    class="form-select form-select-sm"
+                    [(ngModel)]="user.roles[0]"
+                    (ngModelChange)="updateRole(user)">
+              <option *ngFor="let role of ['user','admin']" [value]="role">{{ role }}</option>
+            </select>
+          </td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-outline-info me-1"
+                    (click)="openUserModal(user)"
+                    data-bs-toggle="modal"
+                    data-bs-target="#viewUserModal">
+              <i class="bi bi-eye"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger"
+                  *ngIf="authService.hasRole('superadmin') 
+                        && !user.roles.includes('superadmin') 
+                        && user.id !== authService.currentUser()?.id"
+                  (click)="openDeleteModal(user)"
+                  data-bs-toggle="modal"
+                  data-bs-target="#deleteUserModal">
+            <i class="bi bi-trash"></i>
+          </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- View Profile Modal -->
+<div class="modal fade" id="viewUserModal" tabindex="-1" aria-labelledby="viewUserLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+
+      <!-- Modal Header -->
+      <div class="modal-header bg-primary text-white rounded-top-4 px-4 py-3">
+        <h5 class="modal-title fw-semibold d-flex align-items-center" id="viewUserLabel">
+          <i class="bi bi-person-circle me-2 fs-5"></i> User Information
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body bg-light px-4 py-4">
+        <div class="row g-4">
+
+          <!-- Full Name -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary small mb-1">Full Name</label>
+            <div class="info-box">
+              <i class="bi bi-person-fill text-primary me-2"></i> {{ selectedUser?.name }}
+            </div>
+          </div>
+
+          <!-- Username -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary small mb-1">Username</label>
+            <div class="info-box">
+              <i class="bi bi-person-badge-fill text-info me-2"></i> {{ selectedUser?.username }}
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="col-md-6">
+            <label class="form-label fw-bold text-secondary small mb-1">Email</label>
+            <div class="info-box">
+              <i class="bi bi-envelope-fill text-danger me-2"></i> {{ selectedUser?.email }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer bg-white rounded-bottom-4 px-4 py-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          <i class="bi bi-x-circle me-1"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow-lg">
+      <div class="modal-header bg-danger text-white rounded-top-4 px-4 py-3">
+        <h5 class="modal-title fw-semibold d-flex align-items-center" id="deleteUserLabel">
+          <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i> Confirm Delete
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body px-4 py-4">
+        <p class="mb-0">
+          Are you sure you want to delete
+          <span class="fw-bold text-danger">{{ selectedUser?.name }}</span>? This action cannot be undone.
+        </p>
+      </div>
+      <div class="modal-footer bg-white rounded-bottom-4 px-4 py-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-danger rounded-pill px-4" (click)="confirmDelete()" data-bs-dismiss="modal">
+          <i class="bi bi-trash me-1"></i> Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

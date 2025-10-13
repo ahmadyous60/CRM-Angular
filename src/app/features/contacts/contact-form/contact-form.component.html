@@ -1,0 +1,107 @@
+<div class="row g-3" [formGroup]="f">
+
+  <!-- Personal Information -->
+  <h5 class="text-white mt-3">Personal Information</h5>
+
+  <!-- First Name -->
+  <div class="col-md-6 mb-3">
+    <label class="form-label text-white">First Name</label>
+    <input class="form-control" formControlName="firstName" placeholder="First Name">
+    <small class="text-danger" *ngIf="f.get('firstName')?.touched && f.get('firstName')?.hasError('required')">
+      First Name is required
+    </small>
+  </div>
+
+  <!-- Last Name -->
+  <div class="col-md-6 mb-3">
+    <label class="form-label text-white">Last Name</label>
+    <input class="form-control" formControlName="lastName" placeholder="Last Name">
+    <small class="text-danger" *ngIf="f.get('lastName')?.touched && f.get('lastName')?.hasError('required')">
+      Last Name is required
+    </small>
+  </div>
+
+  <!-- Mobile -->
+  <div class="col-md-6 mb-3">
+    <label class="form-label text-white">Mobile</label>
+    <input class="form-control" formControlName="mobile" placeholder="+92300XXXXXXX">
+  </div>
+
+  <!-- Date of Birth -->
+  <div class="col-md-6 mb-3">
+    <label class="form-label text-white">Date of Birth</label>
+    <input type="date" class="form-control" formControlName="dob">
+  </div>
+
+  <!-- Reporting To -->
+  <div class="col-md-12 mb-3">
+    <label class="form-label text-white">Reporting To</label>
+    <input class="form-control" formControlName="reportingTo" placeholder="Manager Name or Email">
+  </div>
+
+  <!-- Email -->
+  <div class="col-md-12 mb-3">
+    <label class="form-label text-white">Email</label>
+    <input class="form-control" formControlName="email" placeholder="example@email.com">
+    <small class="text-danger" *ngIf="f.get('email')?.touched && f.get('email')?.hasError('required')">
+      Email is required
+    </small>
+    <small class="text-danger" *ngIf="f.get('email')?.touched && f.get('email')?.hasError('pattern')">
+      Invalid email format
+    </small>
+  </div>
+
+  <!-- Address Information (only visible if Mobile is filled) -->
+  <h5 class="text-white mt-4" *ngIf="f.get('mobile')?.value">Address Information</h5>
+
+  <div class="col-md-6 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Mailing Street</label>
+    <input class="form-control" formControlName="mailingStreet">
+  </div>
+
+  <div class="col-md-6 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Other Street</label>
+    <input class="form-control" formControlName="otherStreet">
+  </div>
+
+  <div class="col-md-4 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Mailing City</label>
+    <input class="form-control" formControlName="mailingCity">
+  </div>
+
+  <div class="col-md-4 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Other City</label>
+    <input class="form-control" formControlName="otherCity">
+  </div>
+
+  <div class="col-md-4 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Mailing State</label>
+    <input class="form-control" formControlName="mailingState">
+  </div>
+
+  <div class="col-md-4 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Other State</label>
+    <input class="form-control" formControlName="otherState">
+  </div>
+
+  <div class="col-md-4 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Mailing Zip</label>
+    <input class="form-control" formControlName="mailingZip">
+  </div>
+
+  <div class="col-md-4 mb-3" *ngIf="f.get('mobile')?.value">
+    <label class="form-label text-white">Mailing Country</label>
+    <input class="form-control" formControlName="mailingCountry">
+  </div>
+
+  <!-- Buttons -->
+  <div class="col-12 d-flex gap-2 mt-3">
+    <button class="btn btn-primary" (click)="save()" [disabled]="f.invalid">
+      <i class="bi bi-check2"></i> Save
+    </button>
+    <button class="btn btn-outline-light" type="button" (click)="router.navigateByUrl('/contacts')">
+      Cancel
+    </button>
+  </div>
+
+</div>

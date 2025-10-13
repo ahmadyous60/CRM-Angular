@@ -1,0 +1,91 @@
+<section class="vh-100 d-flex align-items-center justify-content-center bg-gradient" style="background: linear-gradient(135deg, #e0c3fc, #8ec5fc);">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-8 col-lg-6 col-xl-5">
+        <div class="card border-0 shadow-lg rounded-4 animate-card">
+          <div class="card-body p-5">
+
+            <h2 class="text-center mb-4 fw-bold text-gradient animate-title">User Login</h2>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            
+              <!-- Username -->
+              <div class="form-floating mb-3 animate-input">
+                <input 
+                  type="text" 
+                  id="username" 
+                  class="form-control" 
+                  placeholder="Username"
+                  formControlName="username"
+                />
+                <label for="username">Username</label>
+              </div>
+              <div class="text-danger mt-1" *ngIf="loginForm.get('username')?.touched && loginForm.get('username')?.invalid">
+                Username is required
+              </div>
+
+              <!-- Password -->
+              <div class="form-floating mb-3 animate-input position-relative">
+                <input 
+                  [type]="showPassword ? 'text' : 'password'" 
+                  id="password" 
+                  class="form-control" 
+                  placeholder="Password"
+                  formControlName="password"
+                />
+                <label for="password">Password</label>
+                <!-- Password toggle icon -->
+                <button 
+                  type="button" 
+                  class="btn position-absolute top-50 end-0 translate-middle-y me-3 p-0 border-0 bg-transparent"
+                  (click)="togglePassword()" tabindex="-1">
+                  <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                </button>
+              </div>
+              <div class="text-danger mt-1" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+                Password is required
+              </div>
+
+              <!-- Global Error -->
+              <div *ngIf="errorMessage" class="alert alert-danger text-center mt-3 animate-error">
+                {{ errorMessage }}
+              </div>
+
+              <!-- Forgot Password -->
+              <div class="d-flex justify-content-end mb-3 mt-2">
+                <button 
+                  type="button" 
+                  class="btn btn-link text-decoration-none p-0 fw-semibold animate-link" 
+                  (click)="goToForgotPassword()">
+                  Forgot password?
+                </button>
+              </div>
+
+              <!-- Sign In Button -->
+              <button 
+                type="submit" 
+                class="btn btn-lg w-100 text-white fw-semibold animate-button"
+                [disabled]="loginForm.invalid"
+                style="background: linear-gradient(135deg, #667eea, #764ba2); box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4); border: none;">
+                Sign in
+              </button>
+
+              <!-- Divider -->
+              <div class="text-center my-4 text-muted">OR</div>
+
+              <!-- Sign Up Button -->
+              <a 
+                routerLink="/signup" 
+                class="btn btn-lg w-100 fw-semibold animate-button-alt"
+                style="background: linear-gradient(135deg, #ff758c, #ff7eb3); color: white; border: none;">
+                Create Account
+              </a>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

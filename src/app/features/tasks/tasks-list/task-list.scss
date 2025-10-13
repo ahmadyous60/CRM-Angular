@@ -1,0 +1,24 @@
+  // .btn-sm {
+  //   padding: 2px 6px;
+  //   font-size: 0.65rem;
+  //   line-height: 1;
+  //   border-radius: 0.2rem;
+  // }
+
+  .truncate {
+    max-width: 180px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 768px) {
+    .truncate {
+      max-width: 120px;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+      align-items: flex-end;
+    }
+  }

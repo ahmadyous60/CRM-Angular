@@ -1,0 +1,16 @@
+<div style="padding: 20px; background: #333; color: white; min-height: 100vh;">
+  <h1>CRM App</h1>
+  <p>If you can see this, the app is loading correctly.</p>
+  <p>Current URL: <span id="current-url">Loading...</span></p>
+  <nav>
+    <a href="/leads" style="color: white; margin-right: 10px;">Leads</a>
+    <a href="/deals" style="color: white; margin-right: 10px;">Deals</a>
+    <a href="/contacts" style="color: white; margin-right: 10px;">Contacts</a>
+    <a href="/companies" style="color: white;">Companies</a>
+  </nav>
+  <router-outlet />
+  </div>
+
+<script>
+  document.getElementById('current-url').textContent = window.location.href;
+</script> 
